@@ -1,0 +1,118 @@
+//
+//  ControlLayer.m
+//  Loderunners
+//
+//  Created by Igor on 27/06/14.
+//  Copyright (c) 2014 Cloud2Logic. All rights reserved.
+//
+
+#import "ControlLayer.h"
+
+@implementation ControlLayer
+
+-(id) initWithRunner: (Runner*) runner andMap:(RunnerTiledMap*) map
+{
+    self = [super init];
+    if(self) {
+        
+        _mainRunner = runner;
+        _mainMap = map;
+        
+        //enable touch handling
+        self.userInteractionEnabled = TRUE;
+        
+        //add elements to the layer
+        ControlButton *rightButton = [ControlButton controlButtonWithImage:@"arrow-hd.png"];
+        [rightButton setPosition:ccp(520,40)];
+        [rightButton setButtonDownTarget:@selector(rightButtonDown) fromObject:self];
+        [rightButton setButtonUpTarget:@selector(buttonUp) fromObject:self];
+        [self addChild:rightButton];
+        
+        ControlButton *leftButton = [ControlButton controlButtonWithImage:@"arrow-hd.png"];
+        leftButton.flipX = YES;
+        [leftButton setPosition:ccp(430,40)];
+        [leftButton setButtonDownTarget:@selector(leftButtonDown) fromObject:self];
+        [leftButton setButtonUpTarget:@selector(buttonUp) fromObject:self];
+        [self addChild:leftButton];
+        
+        ControlButton* upButton = [ControlButton controlButtonWithImage:@"arrow-hd.png"];
+        //upButton.rotationalSkewX = 90;
+        [upButton setPosition:ccp(475,70)];
+        [upButton setRotation:-90];
+        [upButton setButtonDownTarget: @selector(upButtonDown) fromObject: self];
+        [upButton setButtonUpTarget:@selector(buttonUp) fromObject:self];
+        [self addChild:upButton];
+        
+        ControlButton *downButton = [ControlButton controlButtonWithImage:@"arrow-hd.png"];
+        [downButton setPosition:ccp(475, 25)];
+        [downButton setRotation:90];
+        [downButton setButtonDownTarget:@selector(downButtonDown) fromObject:self];
+        [downButton setButtonUpTarget:@selector(buttonUp) fromObject:self];
+        [self addChild:downButton];
+        
+    }
+    return self;
+}
+
+-(void) rightButtonDown {
+    [_mainRunner runX: 1000];
+}
+
+-(void) buttonUp {
+    CCLOG(@"ControlLayer: buttonUp");
+    [_mainRunner stop];
+}
+
+-(void) leftButtonDown {
+    [_mainRunner runX: -1000];
+}
+
+-(void) downButtonDown {
+    int tile = [_mainMap getTileAtPosition:[_mainRunner position]];
+    //CCLOG(@"Tile at player position is: %d",tile);
+    //
+    if(tile == 13 || tile == 10 || tile == 11 || tile == 12) {
+        float r_x = [_mainRunner position].x;
+        CGPoint pos = [_mainMap getTilePosWithPoint:[_mainRunner position]];
+        pos.x += 16;
+        
+        if(pos.x == r_x) {
+            //CCLOG(@"Player:y :%f ",[_mainRunner position].y);
+            if(tile == 12 && (pos.y-4)  < [_mainRunner position].y) return;
+            if([_mainRunner currentDirection] == UP) {
+                [_mainRunner climbY:-1000];
+            } else [_mainRunner stepTo:pos andClimbY:-1000];
+        }
+        else {
+            if(fabsf(r_x-pos.x) > 16) [_mainRunner jump];
+            else if((r_x > pos.x && [_mainRunner currentDirection] == LEFT) || (r_x < pos.x && [_mainRunner currentDirection] == RIGHT)) [_mainRunner stepTo:pos andClimbY:-1000]; else [(Player*)_mainRunner duck];
+        }
+    } else [(Player*)_mainRunner duck];
+}
+
+-(void) upButtonDown {
+    int tile = [_mainMap getTileAtPosition:[_mainRunner position]];
+    CCLOG(@"Tile at player position is: %d",tile);
+    //
+    if(tile == 13 || tile == 10 || tile == 11 || tile == 12) {
+        float r_x = [_mainRunner position].x;
+        CGPoint pos = [_mainMap getTilePosWithPoint:[_mainRunner position]];
+        pos.x += 16;
+        
+        if(pos.x == r_x) {
+            CCLOG(@"Player:y :%f ",[_mainRunner position].y);
+            if(tile == 12 && (pos.y-4)  < [_mainRunner position].y) return;
+            if([_mainRunner currentDirection] == UP) {
+                [_mainRunner climbY:1000];
+            } else [_mainRunner stepTo:pos andClimbY:1000];
+        }
+        else {
+            if(fabsf(r_x-pos.x) > 16) [_mainRunner jump];
+            else if((r_x > pos.x && [_mainRunner currentDirection] == LEFT) || (r_x < pos.x && [_mainRunner currentDirection] == RIGHT)) [_mainRunner stepTo:pos andClimbY:1000]; else [_mainRunner jump];
+        }
+    } else [_mainRunner jump];
+}
+
+
+
+@end

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>frames</key>
+	<dict>
+		<key>player-stand-back.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,70},{10,32}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{3,0},{10,32}}</string>
+			<key>sourceSize</key>
+			<string>{16,32}</string>
+		</dict>
+		<key>player-stand-left.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,36},{10,32}}</string>
+			<key>offset</key>
+			<string>{3,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{6,0},{10,32}}</string>
+			<key>sourceSize</key>
+			<string>{16,32}</string>
+		</dict>
+		<key>player-stand-right.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{2,2},{10,32}}</string>
+			<key>offset</key>
+			<string>{-3,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{10,32}}</string>
+			<key>sourceSize</key>
+			<string>{16,32}</string>
+		</dict>
+	</dict>
+	<key>metadata</key>
+	<dict>
+		<key>format</key>
+		<integer>2</integer>
+		<key>realTextureFileName</key>
+		<string>player-stand.png</string>
+		<key>size</key>
+		<string>{14,104}</string>
+		<key>smartupdate</key>
+		<string>$TexturePacker:SmartUpdate:76b4eac918130eb6eea07381d6c2242a:bec347a0107e491ba341f4aab9d8fa96:1523e77ecef269294933657085a5f064$</string>
+		<key>textureFileName</key>
+		<string>player-stand.png</string>
+	</dict>
+</dict>
+</plist>

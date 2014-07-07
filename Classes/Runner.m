@@ -116,6 +116,8 @@
     //set initial sprite (always stand right)
     [self setSpriteFrame:[_standFrames objectAtIndex:0]];
     [self setAnchorPoint:ccp(0.5f,0.78f)];
+    
+    
     [self setCurrentDirection:RIGHT];
     
     [self setNextAction:NONE];

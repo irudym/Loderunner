@@ -107,7 +107,6 @@
 }
 
 -(void) update:(CCTime)delta {
-    
     //scroll the map
     CGPoint worldCoord = [self convertToWorldSpace: [_levelScene convertToWorldSpace: [_mainPlayer position]]];
     
@@ -126,6 +125,7 @@
     //check if player is still in scene frame
     CGPoint playerPos = [_mainPlayer position];
     int width = [_mainPlayer boundingBox].size.width;
+    int height = [_mainPlayer boundingBox].size.height;
     //float playerH = [_mainPlayer boundingBox].size.height;
     
     
@@ -133,9 +133,8 @@
         playerPos.x = width/4;
         [_mainPlayer setPosition: playerPos];
     }
-    if(playerPos.y < 30) {
-        playerPos.y = 31;
-        //[_mainPlayer stop];
+    if(playerPos.y < 32 - FLOOR_HEIGHT) {
+        playerPos.y = 32 - FLOOR_HEIGHT;
         [_mainPlayer setPosition: playerPos];
     }
     if(playerPos.x > ([_levelMap getMapWidth] - width/4)) {
@@ -154,13 +153,43 @@
     }
     if([_mainPlayer isFalling]) {
         //check if the player should land
-        if([_levelMap getTileAtPosition:[_mainPlayer positionInPoints]]!=0) {
+        
+        if([_levelMap getTileAtPosition:playerPos]!=0 && playerPos.y < ([_levelMap getTilePosWithPoint:playerPos].y)) {
             [_mainPlayer land];
             
             //fix player y position
             CGPoint ppos = [_mainPlayer position];
-            ppos.y = ((int)(ppos.y/32)) * 32 + 30;
+            ppos.y = [_levelMap getTilePosWithPoint:playerPos].y-2;
             [_mainPlayer setPosition:ppos];
+        }
+    }
+    if([_mainPlayer currentAction] == CLIMB_ACTION) {
+        
+        //check if the player reaches the bottom of a  ladder
+        CGPoint pos = [_levelMap getTilePosWithPoint:playerPos];
+        
+        if([_levelMap getTileAtPosition: playerPos] == 10 || [_levelMap getTileAtPosition: playerPos] == 13 ) {
+            if(playerPos.y < pos.y - 2) {
+                [_mainPlayer stopAllActions];
+                //fix play pos
+                playerPos.y = pos.y - 2;
+                [_mainPlayer setPosition:playerPos];
+            }
+        }
+        
+        //check if the player reaches the top of a ladder
+        //the runner can move faster and skip the border of the tile, to take it into consideration we need to check lower position
+        CGPoint lower_position = playerPos;
+        lower_position.y -= 32;
+        if(lower_position.y < 1) lower_position.y = 1;
+        if([_levelMap getTileAtPosition:lower_position] == 12) {
+            
+            pos.y = (int)(lower_position.y/32)*32;
+            
+            playerPos.y = pos.y+30;
+            [_mainPlayer setPosition:playerPos];
+            CCLOG(@"Player [%f] pos:[%f] lower_pos:[%f]", playerPos.y, pos.y,lower_position.y);
+            [_mainPlayer stopAllActions];
         }
     }
 }

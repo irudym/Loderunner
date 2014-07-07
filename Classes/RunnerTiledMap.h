@@ -9,6 +9,9 @@
 #import "CCTiledMap.h"
 #import "cocos2d.h"
 
+#define FLOOR_HEIGHT 6
+#define TILE_HIGHT 32
+
 @interface RunnerTiledMap : CCTiledMap 
 
 +(id) runnerTiledMapWithFile:(NSString*)tmxFile;
@@ -23,6 +26,7 @@
 -(u_int32_t) getTileAtPosition: (CGPoint) pos;
 
 -(CGPoint) getTilePosWithPoint: (CGPoint) pos;
+-(void) setTile: (uint32_t) gid atPosition: (CGPoint) pos;
 
 -(float) getMapWidth;
 -(float) getMapHeight;

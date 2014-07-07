@@ -69,16 +69,22 @@
 
 -(void) downButtonDown {
     int tile = [_mainMap getTileAtPosition:[_mainRunner position]];
-    //CCLOG(@"Tile at player position is: %d",tile);
+    CCLOG(@"downButtonDown: Tile at player position is: %d",tile);
     //
     if(tile == 13 || tile == 10 || tile == 11 || tile == 12) {
         float r_x = [_mainRunner position].x;
         CGPoint pos = [_mainMap getTilePosWithPoint:[_mainRunner position]];
         pos.x += 16;
         
+        //move player close to the ladder, if the sprite is not too far from the middle of the tile
+        if(fabs(pos.x - r_x)<5) {
+            r_x = pos.x;
+            [_mainRunner setPosition:ccp(r_x, [_mainRunner position].y)];
+        }
+        
         if(pos.x == r_x) {
             //CCLOG(@"Player:y :%f ",[_mainRunner position].y);
-            if(tile == 12 && (pos.y-4)  < [_mainRunner position].y) return;
+            //if(tile == 12 && (pos.y-4)  < [_mainRunner position].y) return;
             if([_mainRunner currentDirection] == UP) {
                 [_mainRunner climbY:-1000];
             } else [_mainRunner stepTo:pos andClimbY:-1000];
@@ -98,6 +104,12 @@
         float r_x = [_mainRunner position].x;
         CGPoint pos = [_mainMap getTilePosWithPoint:[_mainRunner position]];
         pos.x += 16;
+        
+        //move player close to the ladder, if the sprite is not too far from the middle of the tile
+        if(fabs(pos.x - r_x)<5) {
+            r_x = pos.x;
+            [_mainRunner setPosition:ccp(r_x, [_mainRunner position].y)];
+        }
         
         if(pos.x == r_x) {
             CCLOG(@"Player:y :%f ",[_mainRunner position].y);

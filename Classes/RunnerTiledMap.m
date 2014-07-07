@@ -49,7 +49,6 @@
  */
 -(CGPoint) getTilePosWithPoint:(CGPoint)point {
     CGPoint pos = [_mapLayer positionAt:[_mapLayer tileCoordinateAt:point]];
-    CCLOG(@"Tile coords: [%f,%f]", pos.x,pos.y);
     return pos;
 }
 
@@ -59,6 +58,10 @@
 
 -(float) getMapWidth {
     return [self mapSize].width*[self tileSize].width;
+}
+
+-(void) setTile:(uint32_t) gid atPosition :(CGPoint)pos {
+    [[self mapLayer] setTileGID: gid at:[_mapLayer tileCoordinateAt:pos]];
 }
 
 @end

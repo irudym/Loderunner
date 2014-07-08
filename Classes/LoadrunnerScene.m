@@ -146,10 +146,15 @@
     }
     
     //update the main scene
+    u_int32_t tile = [_levelMap getTileAtPosition:playerPos];
+    CGPoint pos = [_levelMap getTilePosWithPoint:playerPos];
     
     //check if the player should fall
-    if(![_mainPlayer isJumping] && [_levelMap getTileAtPosition:[_mainPlayer position]] == 0 && playerPos.y>31) {
-        if([_mainPlayer currentDirection] != UP) [_mainPlayer fall]; 
+    if((![_mainPlayer isJumping] && [_levelMap getTileAtPosition:[_mainPlayer position]] == 0 && playerPos.y>31) || (tile==11 && (playerPos.x < pos.x + 4 || playerPos.x > pos.x + 28))) {
+        if([_mainPlayer currentDirection] != UP) {
+            [_mainPlayer fall];
+            return;
+        }
     }
     if([_mainPlayer isFalling]) {
         //check if the player should land

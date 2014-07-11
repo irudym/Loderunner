@@ -5,7 +5,7 @@
  </tileset>
  <layer name="map" width="20" height="10">
   <data encoding="base64" compression="zlib">
-   eJytUQkKwCAMUzdnd/3/u2shhdJ5bKAQPGKTVEOYOyLjYmyMzKAJmqfTF+2EWbxWxoJ1gidhP9Lrcf5erU7yHPAvyFTgncGRqY8mo3KtnCPvVh+9/mboaQ/69voGZHgK738rlfMv/n/y7Qa323u0eHv+ABdlApU=
+   eJy1UYsKgCAQU8u00v//3XYw4ZAzg0oY92Sb6tx35wQ8UIANiEB+yaejI79wB0bRWoGFeaBmZj3jG2lae1YtGgf1Ez0l9iNnWe175bHNipqPvFn92e5ffO0O7e2l1vf0zPt/S12/93f3L0/9VWAndG5hNK8qXvmxAzc=
   </data>
  </layer>
  <layer name="shadows" width="20" height="10">

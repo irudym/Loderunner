@@ -27,9 +27,12 @@
 
 -(CGPoint) getTilePosWithPoint: (CGPoint) pos;
 -(void) setTile: (uint32_t) gid atPosition: (CGPoint) pos;
+-(CGPoint) getTileCoordinateAt: (CGPoint) pos;
+-(CGPoint) getPositionAt: (CGPoint) pos;
 
 -(float) getMapWidth;
 -(float) getMapHeight;
+-(float) getMapWidthInTiles;
 
 @property CCSprite* background;
 @property CCTiledMapLayer* mapLayer;

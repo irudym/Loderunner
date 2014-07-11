@@ -64,4 +64,18 @@
     [[self mapLayer] setTileGID: gid at:[_mapLayer tileCoordinateAt:pos]];
 }
 
+-(CGPoint) getTileCoordinateAt:(CGPoint)pos {
+    return [_mapLayer tileCoordinateAt:pos];
+}
+
+-(float) getMapWidthInTiles {
+    return [self mapSize].width;
+}
+
+-(CGPoint) getPositionAt:(CGPoint)pos {
+    if(pos.x>=0 && pos.y>=0 && pos.x<[_mapLayer layerSize].width && pos.y<[_mapLayer layerSize].height)
+        return [_mapLayer positionAt:pos];
+    else return ccp(1,1);
+}
+
 @end

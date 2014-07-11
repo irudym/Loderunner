@@ -55,15 +55,37 @@
 }
 
 -(void) rightButtonDown {
+    //check if the right tile has a place to run from a ladder
+    if([_mainRunner currentDirection] == UP) {
+        CGPoint playerPos = [_mainRunner position];
+        CGPoint currTile = [_mainMap getTileCoordinateAt:playerPos];
+        if(currTile.x == [_mainMap getMapWidthInTiles] - 1) return;
+        CGPoint nextTile = [_mainMap getPositionAt:ccp(currTile.x+1,currTile.y)];
+        
+        if([_mainMap getTileAtPosition:nextTile] !=0) {
+            if(playerPos.y<nextTile.y-2) return;
+        }
+    }
     [_mainRunner runX: 1000];
 }
-
+//
 -(void) buttonUp {
     CCLOG(@"ControlLayer: buttonUp");
     [_mainRunner stop];
 }
 
 -(void) leftButtonDown {
+    //check if the right tile has a place to run from a ladder
+    if([_mainRunner currentDirection] == UP) {
+        CGPoint playerPos = [_mainRunner position];
+        CGPoint currTile = [_mainMap getTileCoordinateAt:playerPos];
+        if(currTile.x == 0) return;
+        CGPoint nextTile = [_mainMap getPositionAt:ccp(currTile.x-1,currTile.y)];
+        
+        if([_mainMap getTileAtPosition:nextTile] !=0) {
+            if(playerPos.y<nextTile.y-2) return;
+        }
+    }
     [_mainRunner runX: -1000];
 }
 

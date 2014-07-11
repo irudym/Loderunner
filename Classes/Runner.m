@@ -319,7 +319,7 @@
     
     [self runAction:[CCActionSequence actionOne:(CCActionFiniteTime*)_shortJumpAction[_currentDirection] two: [CCActionCallFunc actionWithTarget:self selector:@selector(followingAction)]]];
     
-    CCAction* jumpByAction = [CCActionJumpBy actionWithDuration:0.5 position:ccp(jumpX,0) height:8 jumps:1];
+    CCAction* jumpByAction = [CCActionJumpBy actionWithDuration:0.5 position:ccp(jumpX,0) height:16 jumps:1];
     [jumpByAction setTag:JUMP_ACTION];
     [self runAction:jumpByAction];
 }

@@ -67,7 +67,6 @@
 
         if(currentTask.taskType == RUN_ACTION) {
             //add run action to runner
-            CCLOG(@"Run monster to %f", currentTask.x);
             [self runX:16+(currentTask.x - [self position].x)];
             [taskList removeLast];
         }

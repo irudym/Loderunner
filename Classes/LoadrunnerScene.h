@@ -11,6 +11,7 @@
 #import "cocos2d.h"
 #import "cocos2d-ui.h"
 #import "Player.h"
+#import "Monster.h"
 #import "ControlLayer.h"
 #import "RunnerTiledMap.h"
 
@@ -28,7 +29,14 @@
 
 -(void) update:(CCTime)delta;
 
-@property Player *mainPlayer;
+/**
+ *  update runner state (falling, landing and so on)
+ *  @param runner - pointer to a Runner class
+ **/
+-(void) updateRunner: (Runner*) runner;
+
+@property Player* mainPlayer;
+@property Monster* monster1;
 @property ControlLayer* controlLayer;
 @property RunnerTiledMap* levelMap;
 

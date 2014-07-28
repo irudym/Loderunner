@@ -31,7 +31,7 @@
     _background = [CCSprite spriteWithImageNamed:filename];
     [_background setPosition:ccp(0,0)];
     [_background setAnchorPoint:ccp(0,0)];
-    [self addChild:_background z:-1];
+    [self addChild:_background z: -1];
 }
 
 /**
@@ -44,8 +44,19 @@
     return [_mapLayer tileGIDAt:[_mapLayer tileCoordinateAt:pos]];
 }
 
+
+/**
+ *  Return tile ID at provided tilemap postion
+ *  @param pos - tilemap position (i,j)
+ *  @return tile ID
+ */
+-(u_int32_t) getTile: (CGPoint) pos {
+    if(pos.x < 0 || pos.y < 0) return 0;
+    return [_mapLayer tileGIDAt:pos];
+}
+
 /** 
- *  Get x,y coord of the tile on the scene which contain point Position
+ *  Get x,y coord of the tile on the scene which contains point Position
  */
 -(CGPoint) getTilePosWithPoint:(CGPoint)point {
     CGPoint pos = [_mapLayer positionAt:[_mapLayer tileCoordinateAt:point]];
@@ -64,12 +75,22 @@
     [[self mapLayer] setTileGID: gid at:[_mapLayer tileCoordinateAt:pos]];
 }
 
+/**
+ *  Return the position in tile coordinates of the tile specified by position in points (cocos2d).
+ *
+ *  @param position Position in points.
+ *  @return Coordinate of the tile at that position.
+ */
 -(CGPoint) getTileCoordinateAt:(CGPoint)pos {
     return [_mapLayer tileCoordinateAt:pos];
 }
 
 -(float) getMapWidthInTiles {
     return [self mapSize].width;
+}
+
+-(float) getMapHeightInTiles {
+    return [self mapSize].height;
 }
 
 -(CGPoint) getPositionAt:(CGPoint)pos {

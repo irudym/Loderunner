@@ -76,24 +76,30 @@
     
     
     
-    self.levelMap = [RunnerTiledMap runnerTiledMapWithFile:@"testmap1.tmx"];
-    @try {
-        CCLOG(@"Tile at [1,1] : %d",[_levelMap getTileAtPosition: ccp(100,84)]);
-    } @catch (NSException* e) {
-        CCLOG(@"Error getting tile at position 0,0");
-    }
+    self.levelMap = [RunnerTiledMap runnerTiledMapWithFile:@"level1.tmx"];
     //[self addChild: self.levelMap];
     [_levelScene addChild:self.levelMap];
     
     
     @try {
         _mainPlayer = [[Player alloc] init];
-        [_mainPlayer setPosition: ccp(100,210)];
-        //[self addChild:_mainPlayer];
+        [_mainPlayer setPosition: ccp(230,260)];
         [_levelScene addChild:_mainPlayer];
     } @catch (NSException *e) {
         CCLOG(@"Error in creating mainPlayer");
     }
+    
+    @try {
+        _monster1 = [[Monster alloc] initWithMap:self.levelMap andPray:_mainPlayer];
+        [_monster1 setPosition: ccp(300,40)];
+        [_levelScene addChild:_monster1];
+    } @catch (NSException *e) {
+        CCLOG(@"Error in creating mainPlayer");
+    }
+    
+    [_monster1 DEBUGset];
+    
+    
     
     
     [self addChild:_levelScene];
@@ -101,7 +107,6 @@
     _controlLayer = [[ControlLayer alloc] initWithRunner:_mainPlayer andMap: _levelMap];
     [self  addChild:_controlLayer];
     
-
     // done
 	return self;
 }
@@ -121,25 +126,37 @@
         if([_levelScene position].x<0) [_levelScene setPosition:ccp([_levelScene position].x+4,[_levelScene position].y)];
     }
 
+    [self updateRunner:_mainPlayer];
+    [self updateRunner: _monster1];
     
-    //check if player is still in scene frame
-    CGPoint playerPos = [_mainPlayer position];
-    int width = [_mainPlayer boundingBox].size.width;
-    int height = [_mainPlayer boundingBox].size.height;
-    //float playerH = [_mainPlayer boundingBox].size.height;
+    [_monster1 updateAI];
+    
+}
+
+/**
+ *  update runner state (falling, landing and so on)
+ *  @param runner - pointer to a Runner class
+ **/
+-(void) updateRunner:(Runner *)runner {
+    
+    //check if the runner is still in scene frame
+    CGPoint playerPos = [runner position];
+    int width = [runner boundingBox].size.width;
+    int height = [runner boundingBox].size.height;
+
     
     
     if(playerPos.x < width/4) {
         playerPos.x = width/4;
-        [_mainPlayer setPosition: playerPos];
+        [runner setPosition: playerPos];
     }
     if(playerPos.y < 32 - FLOOR_HEIGHT) {
         playerPos.y = 32 - FLOOR_HEIGHT;
-        [_mainPlayer setPosition: playerPos];
+        [runner setPosition: playerPos];
     }
     if(playerPos.x > ([_levelMap getMapWidth] - width/4)) {
         playerPos.x = [_levelMap getMapWidth] - width/4;
-        [_mainPlayer setPosition: playerPos];
+        [runner setPosition: playerPos];
     }
     if(playerPos.y > ([_levelMap getMapHeight] - 1)) {
         playerPos.y = [_levelMap getMapHeight] - 1;
@@ -150,35 +167,35 @@
     CGPoint pos = [_levelMap getTilePosWithPoint:playerPos];
     
     //check if the player should fall
-    if((![_mainPlayer isJumping] && [_levelMap getTileAtPosition:[_mainPlayer position]] == 0 && playerPos.y>31) || (tile==11 && (playerPos.x < pos.x + 4 || playerPos.x > pos.x + 28))) {
-        if([_mainPlayer currentDirection] != UP) {
-            [_mainPlayer fall];
+    if((![runner isJumping] && [_levelMap getTileAtPosition:[runner position]] == 0 && playerPos.y>31) || (tile==11 && (playerPos.x < pos.x + 4 || playerPos.x > pos.x + 28))) {
+        if([runner currentDirection] != UP) {
+            [runner fall];
             return;
         }
     }
-    if([_mainPlayer isFalling]) {
+    if([runner isFalling]) {
         //check if the player should land
         
         if([_levelMap getTileAtPosition:playerPos]!=0 && playerPos.y < ([_levelMap getTilePosWithPoint:playerPos].y)) {
-            [_mainPlayer land];
+            [runner land];
             
             //fix player y position
-            CGPoint ppos = [_mainPlayer position];
+            CGPoint ppos = [runner position];
             ppos.y = [_levelMap getTilePosWithPoint:playerPos].y-2;
-            [_mainPlayer setPosition:ppos];
+            [runner setPosition:ppos];
         }
     }
-    if([_mainPlayer currentAction] == CLIMB_ACTION) {
+    if([runner currentAction] == CLIMB_ACTION) {
         
         //check if the player reaches the bottom of a  ladder
         CGPoint pos = [_levelMap getTilePosWithPoint:playerPos];
         
         if([_levelMap getTileAtPosition: playerPos] == 10 || [_levelMap getTileAtPosition: playerPos] == 13 ) {
             if(playerPos.y < pos.y - 2) {
-                [_mainPlayer stopAllActions];
+                [runner stopAllActions];
                 //fix play pos
                 playerPos.y = pos.y - 2;
-                [_mainPlayer setPosition:playerPos];
+                [runner setPosition:playerPos];
             }
         }
         
@@ -192,9 +209,9 @@
             pos.y = (int)(lower_position.y/32)*32;
             
             playerPos.y = pos.y+30;
-            [_mainPlayer setPosition:playerPos];
+            [runner setPosition:playerPos];
             CCLOG(@"Player [%f] pos:[%f] lower_pos:[%f]", playerPos.y, pos.y,lower_position.y);
-            [_mainPlayer stopAllActions];
+            [runner stopAllActions];
         }
     }
 }

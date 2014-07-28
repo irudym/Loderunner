@@ -37,7 +37,7 @@
 {
     CCSpriteFrame *frame;
     
-    CCLOG(@"Loading Runner");
+    CCLOG(@"Runner::load() : Loading %@ class", self.name);
     //load sprites animation
     
     _runRightFrames = [NSMutableArray array];
@@ -176,17 +176,19 @@
     
 }
 
-
+/**
+ *  move (run) the runner by X points
+ *  turn the runner in the necessary direction if needed
+ */
+ 
 -(void) runX: (float) x {
-    CCLOG(@"runX:%f currentAction: %d, nextAction: %d", x,currentAction, nextAction);
+    //CCLOG(@"runX:%f currentAction: %d, nextAction: %d", x,currentAction, nextAction);
     if( currentAction!=NONE ) {
-        CCLOG(@"runX: Change nextAction: %d to %d",nextAction, RUN_ACTION);
         nextAction = RUN_ACTION;
         nextPosition.x = x;
         return;
     }
-    if((x > [self position].x && _currentDirection != RIGHT) || (x< [self position].x && _currentDirection != LEFT)) {
-        CCLOG(@"runX: Change currentAction: %d to %d",nextAction, RUN_ACTION);
+    if((x > 0 && _currentDirection != RIGHT) || (x < 0 && _currentDirection != LEFT)) {
         nextAction = RUN_ACTION;
         nextPosition = [self position];
         nextPosition.x = x;
@@ -197,11 +199,11 @@
     
     [self runAction:_runAction[_currentDirection]];
     
-    CCAction* moveAction = [CCActionMoveBy actionWithDuration:[self moveSpeed] position:ccp(x,0)];
+    CCAction* moveAction = [CCActionMoveBy actionWithDuration:[self moveSpeed] * fabs(x)/1000 position:ccp(x,0)];
     [moveAction setTag:MOVE_ACTION];
-    [self runAction:moveAction];
+    //[self runAction:moveAction];
+    [self runAction:[CCActionSequence actionOne:(CCActionFiniteTime*)moveAction two: [CCActionCallFunc actionWithTarget:self selector:@selector(stop)]]];
     
-    CCLOG(@"runX: Change nextAction: %d to %d",nextAction, RUN_ACTION);
     nextAction = RUN_ACTION;
     nextPosition.x = x;
     
@@ -212,12 +214,12 @@
     if(_currentDirection == direct) return;
     
     if(currentAction!=NONE) {
-        CCLOG(@"turn: Change nextAction: %d to %d",nextAction, TURN_ACTION);
+        //CCLOG(@"turn: Change nextAction: %d to %d",nextAction, TURN_ACTION);
         nextAction = TURN_ACTION;
         nextDirection = direct;
         return;
     }
-    CCLOG(@"turn: %d",direct);
+    //CCLOG(@"turn: %d",direct);
     currentAction = TURN_ACTION;
     
     if(_currentDirection!=UP && _currentDirection!=DOWN) {
@@ -229,7 +231,7 @@
             [self runAction:[CCActionSequence actionOne:[(CCActionAnimate*)_turnUpAction[_currentDirection] reverse] two:[CCActionCallFunc actionWithTarget:self selector:@selector(followingAction)]]];
         }
     } else if(_currentDirection == UP) {
-        CCLOG(@"Turn runner: %d", direct);
+        //CCLOG(@"Turn runner: %d", direct);
         [self runAction:[CCActionSequence actionOne:(CCActionAnimate*)_turnUpAction[direct] two:[CCActionCallFunc actionWithTarget:self selector:@selector(followingAction)]]];
     }
     _currentDirection = direct;
@@ -237,36 +239,37 @@
 }
 
 -(void) followingAction {
-    CCLOG(@"followinfAction: currentAction: %d  nextAction: %d", currentAction, nextAction);
+    //CCLOG(@"followinfAction: currentAction: %d  nextAction: %d", currentAction, nextAction);
     ActionTags action = nextAction;
     currentAction = NONE;
-    
-    CCLOG(@"followingAction: Change nextAction: %d to %d",nextAction, NONE);
     nextAction = NONE;
     
     if(action == NONE) {
         [self idle];
-    }
+    } else
     if(action == RUN_ACTION) {
         [self runX: nextPosition.x];
-    }
+    } else
     if(action == JUMP_ACTION ) {
         [self jump];
-    }
+    } else
     if(action == FALL_ACTION) {
         currentAction = NONE;
         [self fall];
-    }
+    } else
     if(action == TURN_ACTION) {
         currentAction = NONE;
         [self turn:nextDirection];
-    }
+    } else
     if(action == CLIMB_ACTION) {
         currentAction = NONE;
         [self climbY:nextPosition.y];
-    }
+    } else
     if(action == STEPTO_ACTION) {
         [self stepTo:nextPosition andClimbY:nextPosition.y];
+    } else
+    if(action == STOP_ACTION) {
+        [self stop];
     }
 }
 
@@ -277,8 +280,7 @@
 }
 
 -(void) stop {
-    CCLOG(@"stop: currentAction: %d, nextAction: %d", currentAction, nextAction);
-    CCLOG(@"stop: Change nextAction: %d to %d",nextAction, NONE);
+    CCLOG(@"Stop : nextAction: %d", nextAction);
     nextAction = NONE;
     if(currentAction == RUN_ACTION && _currentDirection != UP /*it never shoud be UP*/) {
         [self stopAllActions];
@@ -333,15 +335,10 @@
 }
 
 -(void) fall {
-    CCLOG(@"fall: currentAction: %d, nextAction: %d", currentAction, nextAction);
     if(currentAction == FALL_ACTION) return;
     if(currentAction == JUMP_ACTION) {
         return;
     }
-    
-    CCLOG(@"starting to fall: nextAction: %d nextX: %f _currentDirection: %d", nextAction, nextPosition.x, _currentDirection);
-
-    
     [self stopAllActions];
     [self idle];
     
@@ -357,13 +354,13 @@
     [self stopAllActions];
     currentAction = LANDING_ACTION;
     
-    CCLOG(@"landing:: nextAction: %d nextX: %f _currentDirection: %d", nextAction, nextPosition.x, _currentDirection);
-    
     //the _currentDirection should be LEFT or RIGHT!!!
     [self runAction:[CCActionSequence actionOne:_landingAction[_currentDirection] two:[CCActionCallFunc actionWithTarget:self selector:@selector(followingAction)]]];
 }
 
 -(void) climbY: (float) y {
+    CCLOG(@"Climb to: %f",y);
+    
     if(currentAction!=NONE) {
         nextAction = CLIMB_ACTION;
         nextPosition.y = y;
@@ -377,9 +374,13 @@
     }
     
     [self runAction:_climbAction];
-    CCAction* climbBy = [CCActionMoveBy actionWithDuration:10.0f position:ccp(0,y)];
+    CCAction* climbBy = [CCActionMoveBy actionWithDuration:10.0f*(fabs(y)/1000) position:ccp(0,y)];
     [climbBy setTag:CLIMB_ACTION];
-    [self runAction:climbBy];
+    
+    //[self runAction:climbBy];
+    [self runAction:[CCActionSequence actionOne:(CCActionFiniteTime*)climbBy two: [CCActionCallFunc actionWithTarget:self selector:@selector(stop)]]];
+    
+    
     currentAction = CLIMB_ACTION;
     
     //set start frame

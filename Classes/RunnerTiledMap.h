@@ -25,14 +25,34 @@
  */
 -(u_int32_t) getTileAtPosition: (CGPoint) pos;
 
+
+/**
+ *  Return tile ID at provided tilemap postion
+ *  @param pos - tilemap position (i,j)
+ *  @return tile ID
+ */
+-(u_int32_t) getTile: (CGPoint) pos;
+
+
 -(CGPoint) getTilePosWithPoint: (CGPoint) pos;
 -(void) setTile: (uint32_t) gid atPosition: (CGPoint) pos;
+
+
+/**
+ *  Return the position in tile coordinates of the tile specified by position in points (cocos2d).
+ *
+ *  @param position Position in points.
+ *  @return Coordinate of the tile at that position.
+ */
 -(CGPoint) getTileCoordinateAt: (CGPoint) pos;
+
+
 -(CGPoint) getPositionAt: (CGPoint) pos;
 
 -(float) getMapWidth;
 -(float) getMapHeight;
 -(float) getMapWidthInTiles;
+-(float) getMapHeightInTiles;
 
 @property CCSprite* background;
 @property CCTiledMapLayer* mapLayer;

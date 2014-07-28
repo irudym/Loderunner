@@ -43,6 +43,7 @@ typedef enum {
 
 -(void) followingAction;
 
+
 @property NSString *name;
 @property CCAnimation* runRightAnimation;
 @property CCAnimation* stopRightAnimation;

@@ -22,6 +22,9 @@
 -(void)DEBUGshowPath;
 -(void)DEBUGset;
 
+//override Runner functions
+-(void) fall;
+
 
 @property Runner* prayRunner;
 

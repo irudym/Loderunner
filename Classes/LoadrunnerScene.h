@@ -37,6 +37,7 @@
 
 @property Player* mainPlayer;
 @property Monster* monster1;
+@property Monster* monster2;
 @property ControlLayer* controlLayer;
 @property RunnerTiledMap* levelMap;
 

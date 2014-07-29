@@ -77,7 +77,7 @@
     //convert coords
     startP = [mainMap getTileCoordinateAt:startP];
     endP = [mainMap getTileCoordinateAt:endP];
-    CCLOG(@"find a path from [%f,%f] to [%f,%f]",startP.x,startP.y, endP.x, endP.y);
+    //CCLOG(@"find a path from [%f,%f] to [%f,%f]",startP.x,startP.y, endP.x, endP.y);
     
     int count = 0;
     AStarNode* checkNode;
@@ -197,14 +197,15 @@
     
     //create a path for the taskList
     AStarNode* path = node;
+    
     TaskList* list = [[TaskList alloc] init];
+    
     [pathList removeAllObjects];
     
     while(path != nil) {
+        //CCLOG(@"Path point: [%d,%d]",path.i,path.j);
         [pathList insertObject:path atIndex:0];
-        //[pathList addObject:path];
         path = [path parentNode];
-        CCLOG(@"Path point: [%d,%d]",path.i,path.j);
     }
     
     
@@ -213,21 +214,37 @@
     BOOL needJump = NO;
     Task* task;
     NSInteger pathSize = [pathList count];
-    while(count < pathSize-1) {
+    while(count < pathSize) {
         //check if the runner can run horizontaly (I = constant)
         needJump = NO;
         checkCount = count;
         while(checkCount < pathSize && [(AStarNode*)pathList[checkCount-1] j] == [(AStarNode*)pathList[checkCount] j]) {
             if([mainMap getTile:ccp([(AStarNode*)pathList[checkCount] i],[(AStarNode*)pathList[checkCount] j])] == 0) {
                 needJump = YES;
+                //checkCount++;
                 break;
             }
             checkCount++;
         }
-        if(checkCount > count) {
+        if(checkCount > count || needJump) {
             count = checkCount;
             checkCount--;
-            task = [[Task alloc] initWithTask:RUN_ACTION andPoint:ccp([(AStarNode*)pathList[checkCount] i]*32,[(AStarNode*)pathList[checkCount] j])];
+            
+            CGPoint runPoint = ccp([(AStarNode*)pathList[checkCount] i]*32,[(AStarNode*)pathList[checkCount] j]);
+            
+            if(needJump) {
+                //fix jump position: put the runner close to the edge
+                //at first we need to detect the direction...
+                
+                if(checkCount < pathSize -1) //it always should be, but in case...
+                {
+                    if([(AStarNode*)pathList[checkCount] i] < [(AStarNode*)pathList[checkCount+1] i]) {
+                        runPoint.x +=10;
+                    } else runPoint.x -=10;
+                }
+            }
+            
+            task = [[Task alloc] initWithTask:RUN_ACTION andPoint:runPoint];
             [list addTask:task];
             CCLOG(@"Add task: %d:[%f,%f]",task.taskType, task.x, task.y);
             

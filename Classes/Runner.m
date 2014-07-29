@@ -192,7 +192,7 @@
         nextAction = RUN_ACTION;
         nextPosition = [self position];
         nextPosition.x = x;
-        if(x > [self position].x) [self turn: RIGHT]; else [self turn: LEFT];
+        if(x < 0) [self turn: LEFT]; else [self turn: RIGHT];
         return;
     }
     currentAction = RUN_ACTION;
@@ -280,7 +280,6 @@
 }
 
 -(void) stop {
-    CCLOG(@"Stop : nextAction: %d", nextAction);
     nextAction = NONE;
     if(currentAction == RUN_ACTION && _currentDirection != UP /*it never shoud be UP*/) {
         [self stopAllActions];
@@ -359,7 +358,6 @@
 }
 
 -(void) climbY: (float) y {
-    CCLOG(@"Climb to: %f",y);
     
     if(currentAction!=NONE) {
         nextAction = CLIMB_ACTION;
@@ -408,15 +406,29 @@
     }
     if(_currentDirection == UP) return; //something wrong with position
     
+    //turn the Runner in the right direction
+    int runnerX = [self position].x;
+    if((runnerX > point.x && _currentDirection == RIGHT) || (runnerX < point.x && _currentDirection == LEFT)) {
+        //turn the runner to ladder
+        nextAction = STEPTO_ACTION;
+        nextPosition.x = point.x;
+        nextPosition.y = y;
+        if(_currentDirection == LEFT) [self turn:RIGHT]; else [self turn:LEFT];
+        return;
+    }
+    
+    
     //if point.x == position.x just climb
-    if(point.x == [self position].x) [self climbY:y];
+    
+    //fix runner position (if it's in [-2,+2] range)
+    if([self position].x> point.x - 2 && [self position].x < point.x + 2) [self setPosition:ccp(point.x, [self position].y)];
+    
+    if(point.x == (int)([self position].x)) [self climbY:y];
     else {
         currentAction = STEPTO_ACTION;
         [self runAction:[CCActionSequence actionOne:_stopAction[_currentDirection] two:[CCActionCallFunc actionWithTarget:self selector:@selector(turnUp)]]];
         float shift = point.x - [self position].x;
-        //if(_currentDirection == LEFT) shift = -shift;
-        //CCLOG(@"runner position: [%f,%f]",[self position].x,[self position].y);
-        //CCLOG(@"Shift: %f",shift);
+
         [self runAction:[CCActionMoveBy actionWithDuration:fabsf(shift)/64 position:ccp(shift,0)]];
         nextAction = CLIMB_ACTION;
         nextPosition.y = y;

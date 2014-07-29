@@ -55,12 +55,9 @@
 }
 
 -(void)update:(CCTime)delta {
+    
     if([self currentAction]!=NONE) return;
     
-    if([taskList isEmpty]) {
-        taskList = nil;
-        return;
-    }
     
     if(taskList!=nil && ![taskList isEmpty]) {
         Task* currentTask = [taskList getTask];
@@ -72,7 +69,11 @@
         }
         if(currentTask.taskType == CLIMB_ACTION) {
             //CCLOG(@"Climb a ladder to %f", currentTask.y);
-            [self climbY:(currentTask.y - [self position].y)];
+            
+            //[self climbY:(currentTask.y - [self position].y)];
+            CGPoint ladder = [mainMap getTilePosWithPoint:[self position]];
+            ladder.x += 16;
+            [self stepTo:ladder andClimbY:(currentTask.y - [self position].y)];
             [taskList removeLast];
         }
         if(currentTask.taskType == JUMP_ACTION) {
@@ -89,7 +90,7 @@
             }
         }
 
-    }
+    } else taskList = nil;
 }
 
 
@@ -102,7 +103,7 @@
     if(path!=nil && [path count]!=0) {
         for(NSInteger count = 0; count< [path count]; count++) {
             point = [mainMap getPositionAt:ccp([(AStarNode*)path[count] i],[(AStarNode*)path[count] j])];
-            point.x += 16;
+             point.x += 16;
             point.y -=16;
             [drawNode drawDot:point radius:4.0f color:[CCColor colorWithRed:1 green:0 blue:0]];
         }
@@ -111,6 +112,14 @@
 
 -(void)DEBUGset {
     [[self parent] addChild:drawNode];
+}
+
+
+-(void) fall {
+    //cancel task list
+    taskList = nil;
+    [self setNextAction:NONE];
+    [super fall];
 }
 
 

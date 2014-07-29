@@ -83,7 +83,7 @@
     
     @try {
         _mainPlayer = [[Player alloc] init];
-        [_mainPlayer setPosition: ccp(230,260)];
+        [_mainPlayer setPosition: ccp(288,96)];
         [_levelScene addChild:_mainPlayer];
     } @catch (NSException *e) {
         CCLOG(@"Error in creating mainPlayer");
@@ -94,7 +94,15 @@
         [_monster1 setPosition: ccp(300,40)];
         [_levelScene addChild:_monster1];
     } @catch (NSException *e) {
-        CCLOG(@"Error in creating mainPlayer");
+        CCLOG(@"Error in creating monster1");
+    }
+    
+    @try {
+        _monster2 = [[Monster alloc] initWithMap:self.levelMap andPray:_mainPlayer];
+        [_monster2 setPosition: ccp(320,280)];
+        [_levelScene addChild:_monster2];
+    } @catch (NSException *e) {
+        CCLOG(@"Error in creating monster2");
     }
     
     [_monster1 DEBUGset];
@@ -128,8 +136,10 @@
 
     [self updateRunner:_mainPlayer];
     [self updateRunner: _monster1];
+    [self updateRunner:_monster2];
     
     [_monster1 updateAI];
+    [_monster2 updateAI];
     
 }
 

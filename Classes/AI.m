@@ -45,8 +45,15 @@
     return GCost;
 }
 
+/**
+ *  Calculating distance to point
+ *  @param  startP - point - start of the distance
+ *  @param  endP - end distance
+ *  @return (int) - distance calculation
+ **/
 -(int) heuristicFrom: (CGPoint)startP to: (CGPoint) endP {
-    return 10*(fabsf(startP.x - endP.x) + fabsf(startP.y - endP.y));
+    //return 10*(fabsf(startP.x - endP.x) + fabsf(startP.y - endP.y));
+    return sqrtf(pow(startP.x - endP.x, 2)+pow(startP.y - endP.y,2));
 }
 
 /**
@@ -83,6 +90,7 @@
     AStarNode* checkNode;
     CGPoint checkPoint;
     int checkGCost = 0;
+    u_int32_t checkTile;
     AStarNode* node = [[AStarNode alloc] init];
     
     //clear lists
@@ -110,14 +118,17 @@
         for(count = 0; count < 4; count++) {
             checkPoint.x = -1;
             checkPoint.y = -1;
+            
             if(count == 0) {
                 //UP
-                if(node.j-1 > 0)
-                    if([mainMap getTile:ccp(node.i, node.j - 1)] != 0) {
+                if(node.j-1 > 0) {
+                    checkTile = [mainMap getTile:ccp(node.i,node.j -1)];
+                    if(checkTile != 0 && [RunnerTiledMap isLadder:checkTile] ) {
                         checkPoint.x = node.i;
                         checkPoint.y = node.j - 1;
                         checkGCost = 20;
                     }
+                }
             }
             if(count == 1) {
                 //LEFT
@@ -131,12 +142,14 @@
             }
             if(count == 2) {
                 //DOWN
-                if(node.j+1 < [mainMap getMapHeightInTiles])
-                    if([mainMap getTile:ccp(node.i,node.j+1)]!=0) {
+                if(node.j+1 < [mainMap getMapHeightInTiles]) {
+                    checkTile = [mainMap getTile:ccp(node.i,node.j + 1)];
+                    if(checkTile!=0 && [RunnerTiledMap isLadder:checkTile]) {
                         checkPoint.x = node.i;
                         checkPoint.y = node.j+1;
                         checkGCost = 20;
                     }
+                }
             }
             if(count == 3) {
                 //RIGHT
@@ -203,10 +216,16 @@
     [pathList removeAllObjects];
     
     while(path != nil) {
-        //CCLOG(@"Path point: [%d,%d]",path.i,path.j);
+        CCLOG(@"Path point: [%d,%d]",path.i,path.j);
         [pathList insertObject:path atIndex:0];
         path = [path parentNode];
     }
+    
+    _lastPoint.x = [(AStarNode*)pathList[[pathList count] -1 ] i];
+    _lastPoint.y = [(AStarNode*)pathList[[pathList count] -1 ] j];
+    //convert ot scene coords
+    _lastPoint = [mainMap getPositionAt:_lastPoint];
+    _lastPoint.x +=16;
     
     
     count = 1;
@@ -269,6 +288,7 @@
             [list addTask:task];
             CCLOG(@"Add task: %d:[%f,%f]",task.taskType, task.x, task.y);
         }
+        if(count == pathSize-1) break; 
     }
     return list;
 }

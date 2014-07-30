@@ -90,17 +90,18 @@
     }
     
     @try {
-        _monster1 = [[Monster alloc] initWithMap:self.levelMap andPray:_mainPlayer];
+        _monster1 = [[Monster alloc] initWithMap:self.levelMap andPrey:_mainPlayer];
         [_monster1 setPosition: ccp(300,40)];
+        [_monster1 setColor:[CCColor colorWithRed:1 green:0 blue:0 alpha:0.9]];
         [_levelScene addChild:_monster1];
     } @catch (NSException *e) {
         CCLOG(@"Error in creating monster1");
     }
     
     @try {
-        _monster2 = [[Monster alloc] initWithMap:self.levelMap andPray:_mainPlayer];
+        _monster2 = [[Monster alloc] initWithMap:self.levelMap andPrey:_mainPlayer];
         [_monster2 setPosition: ccp(320,280)];
-        [_levelScene addChild:_monster2];
+        //[_levelScene addChild:_monster2];
     } @catch (NSException *e) {
         CCLOG(@"Error in creating monster2");
     }
@@ -138,8 +139,6 @@
     [self updateRunner: _monster1];
     [self updateRunner:_monster2];
     
-    [_monster1 updateAI];
-    [_monster2 updateAI];
     
 }
 

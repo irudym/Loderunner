@@ -17,18 +17,18 @@
     RunnerTiledMap* mainMap;
 }
 
-@synthesize prayRunner;
+@synthesize preyRunner;
 
 -(id)init {
     self = [super initWithName: @"monster"];
     return self;
 }
 
--(id) initWithMap:(RunnerTiledMap *)map andPray:(Runner *)pray {
+-(id) initWithMap:(RunnerTiledMap *)map andPrey:(Runner *)prey {
     self = [super initWithName:@"player"]; //debug till I create monster sprites
     if(!self) return (nil);
     
-    self.prayRunner = pray;
+    self.preyRunner = prey;
     
     brains = [[AI alloc] initWithMap:map];
     mainMap = map;
@@ -49,18 +49,37 @@
 -(void) updateAI {
     if([self currentAction] == NONE && taskList == nil) {
         //find the route
-        taskList = [brains findPathFrom:self.position to:prayRunner.position];
+        taskList = [brains findPathFrom:self.position to:preyRunner.position];
         [self DEBUGshowPath];
     }
 }
 
 -(void)update:(CCTime)delta {
     
+    [self updateAI];
+    
     if([self currentAction]!=NONE) return;
+    
+    //check if the pray is close than final point
+    int distance1 = [brains heuristicFrom:[self position] to:[brains lastPoint]];
+    int distance2 = [brains heuristicFrom:[self position] to:[preyRunner position]];
+    
+    //possible lagging issue
+    if(distance2<distance1-16) {
+        //[self stop];
+        //[self setCurrentAction:NONE];
+        //taskList = nil;
+        taskList = [brains findPathFrom:self.position to:preyRunner.position];
+        [self DEBUGshowPath];
+        CCLOG(@"Need path recalculation d1:%d d2:%d", distance1,distance2);
+        return;
+    }
     
     
     if(taskList!=nil && ![taskList isEmpty]) {
         Task* currentTask = [taskList getTask];
+        
+        CCLOG(@"Execute task: %d", currentTask.taskType);
 
         if(currentTask.taskType == RUN_ACTION) {
             //add run action to runner

@@ -21,5 +21,9 @@
 
 -(NSMutableArray*) getPathList;
 
+-(int) heuristicFrom: (CGPoint)startP to: (CGPoint) endP;
+
+@property CGPoint lastPoint;
+
 
 @end

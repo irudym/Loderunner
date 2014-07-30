@@ -54,6 +54,14 @@
 -(float) getMapWidthInTiles;
 -(float) getMapHeightInTiles;
 
+/**
+ *  Check if tile GID belongs to ladders tiles.
+ *
+ *  @pGID tile ID.
+ *  @return YES or NO
+ */
++(BOOL) isLadder: (u_int32_t) GID;
+
 @property CCSprite* background;
 @property CCTiledMapLayer* mapLayer;
 

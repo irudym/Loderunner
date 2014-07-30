@@ -12,7 +12,7 @@
 @interface Monster : Runner
 
 -(id) init;
--(id) initWithMap: (RunnerTiledMap*) map andPray: (Runner*) pray;
+-(id) initWithMap: (RunnerTiledMap*) map andPrey: (Runner*) prey;
 
 -(void)load;
 
@@ -26,6 +26,6 @@
 -(void) fall;
 
 
-@property Runner* prayRunner;
+@property Runner* preyRunner;
 
 @end

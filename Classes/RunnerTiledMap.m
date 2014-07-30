@@ -99,4 +99,8 @@
     else return ccp(1,1);
 }
 
++(BOOL) isLadder:(u_int32_t)GID {
+    return (GID >= 10 && GID <= 13);
+}
+
 @end

@@ -404,17 +404,17 @@
         nextPosition.y = y;
         return;
     }
-    if(_currentDirection == UP) return; //something wrong with position
-    
-    //turn the Runner in the right direction
-    int runnerX = [self position].x;
-    if((runnerX > point.x && _currentDirection == RIGHT) || (runnerX < point.x && _currentDirection == LEFT)) {
-        //turn the runner to ladder
-        nextAction = STEPTO_ACTION;
-        nextPosition.x = point.x;
-        nextPosition.y = y;
-        if(_currentDirection == LEFT) [self turn:RIGHT]; else [self turn:LEFT];
-        return;
+    if(_currentDirection != UP) {
+        //turn the Runner in the right direction
+        int runnerX = [self position].x;
+        if((runnerX > point.x && _currentDirection == RIGHT) || (runnerX < point.x && _currentDirection == LEFT)) {
+            //turn the runner to ladder
+            nextAction = STEPTO_ACTION;
+            nextPosition.x = point.x;
+            nextPosition.y = y;
+            if(_currentDirection == LEFT) [self turn:RIGHT]; else [self turn:LEFT];
+            return;
+        }
     }
     
     

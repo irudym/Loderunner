@@ -11,19 +11,63 @@
 
 @implementation RunnerTiledMap
 
+{
+    NSMutableArray* lightSources;
+}
+
 
 +(id) runnerTiledMapWithFile:(NSString*)tmxFile
 {
+	id map = [[self alloc] initWithFile:tmxFile];
+    return map;
+}
+
+-(id) initWithFile:(NSString *)tmxFile {
     //you should load that data from XML file
     //map: filename.tmx
     //map_layer: map
     //background: bk.png
     
-	id map = [[self alloc] initWithFile:tmxFile];
-    [map loadBackground:@"background.png"];
-    [map setMapLayer:[map layerNamed:@"map"]];
+    self = [super initWithFile: tmxFile];
     
-    return map;
+    [self loadBackground:@"background.png"];
+    [self setMapLayer:[self layerNamed:@"map"]];
+    
+    NSAssert([self objectGroupNamed:@"objects"] != nil, @"tile map has no object layer");
+    
+    
+    NSMutableArray* objects = [[self objectGroupNamed:@"objects"] objects];
+    
+    lightSources = [NSMutableArray array];
+    
+    //load objects from object layer
+    NSInteger x, y;
+    for(int i=0; i<[objects count];i++) {
+        //run through objects and their properties
+        x = [[objects[i] valueForKey:@"x"] integerValue];
+        y = [[objects[i] valueForKey:@"y"] integerValue];
+        
+        if([[objects[i] valueForKey:@"name"] isEqual:@"torch"]) {
+            CCLOG(@"Add torch(%ld,%ld,%@)",(long)x,y,[objects[i] valueForKey:@"file"]);
+            Torch* torch = [[Torch alloc] initWithName:[objects[i] valueForKey:@"file"] andSound:[objects[i] valueForKey:@"sound"] andPosition:ccp(x,y)];
+            [self addChild:torch];
+            [lightSources addObject: torch];
+        }
+        
+    }
+
+    return self;
+}
+
+/**
+ *@function load objects from "objectsGroup"
+ **/
+-(void) loadObjects {
+    
+}
+
+-(NSMutableArray*) getLightSources {
+    return lightSources;
 }
 
 

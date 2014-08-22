@@ -40,8 +40,6 @@
 }
 
 -(void) duck {
-    CCLOG(@"Duck: currentAction: %d   nextAction: %d", self.currentAction,self.nextAction);
-    
     if([self isDuck] || self.currentDirection == UP || self.currentAction == STEPTO_ACTION || self.nextAction == CLIMB_ACTION) return;
     if([self currentAction]!=NONE) {
         [self setNextAction:DUCK_ACTION];
@@ -72,7 +70,6 @@
 }
 
 -(void) stop {
-    CCLOG(@"Player: stop");
     if(self.isDuck) {
         _ducked = NO;
         //stand up

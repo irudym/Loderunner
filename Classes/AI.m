@@ -233,6 +233,7 @@
     BOOL needJump = NO;
     Task* task;
     NSInteger pathSize = [pathList count];
+    int bypass = 0;
     while(count < pathSize) {
         //check if the runner can run horizontaly (I = constant)
         needJump = NO;
@@ -288,7 +289,8 @@
             [list addTask:task];
             CCLOG(@"Add task: %d:[%f,%f]",task.taskType, task.x, task.y);
         }
-        if(count == pathSize-1) break; 
+        if(count == pathSize-1) break;
+        if(bypass++>200) break;
     }
     return list;
 }

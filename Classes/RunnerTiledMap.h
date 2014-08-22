@@ -9,12 +9,16 @@
 #import "CCTiledMap.h"
 #import "cocos2d.h"
 
+#import "Torch.h"
+
 #define FLOOR_HEIGHT 6
 #define TILE_HIGHT 32
 
 @interface RunnerTiledMap : CCTiledMap 
 
 +(id) runnerTiledMapWithFile:(NSString*)tmxFile;
+
+-(id) initWithFile:(NSString *)tmxFile;
 -(void) loadBackground: (NSString*) filename;
 
 /**
@@ -54,6 +58,8 @@
 -(float) getMapWidthInTiles;
 -(float) getMapHeightInTiles;
 
+-(void) loadObjects;
+
 /**
  *  Check if tile GID belongs to ladders tiles.
  *
@@ -61,6 +67,13 @@
  *  @return YES or NO
  */
 +(BOOL) isLadder: (u_int32_t) GID;
+
+
+/** 
+ * Return an array of light sources
+ **/
+-(NSMutableArray*) getLightSources;
+
 
 @property CCSprite* background;
 @property CCTiledMapLayer* mapLayer;

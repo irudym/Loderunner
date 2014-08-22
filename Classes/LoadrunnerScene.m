@@ -10,6 +10,12 @@
 #import "LoadrunnerScene.h"
 #import "IntroScene.h"
 
+#import "OpenALManager.h"
+
+#import "CCShader.h"
+
+
+
 // -----------------------------------------------------------------------
 #pragma mark - LodeRunnerScene
 // -----------------------------------------------------------------------
@@ -18,6 +24,10 @@
 @implementation LoadrunnerScene
 {
 //private properties
+    CCRenderTexture* lightmap;
+    NSInteger oscillator;
+    
+    CCNode* mainScene;  //main scene node
 }
 
 // -----------------------------------------------------------------------
@@ -26,6 +36,7 @@
 
 + (LoadrunnerScene *)scene
 {
+    
     return [[self alloc] init];
 }
 
@@ -36,6 +47,9 @@
     // Apple recommend assigning self with supers return value
     self = [super init];
     if (!self) return(nil);
+    
+    //create lightSources list
+    self.lightSources = [NSMutableArray array];
     
     
     // Create a colored background (Dark Grey)
@@ -56,6 +70,7 @@
     
     
     //load game pictures
+    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"fire.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"run-right.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"player-stop-right.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"player-rotate.plist"];
@@ -67,33 +82,62 @@
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"player-landing-right.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"player-landing-left.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"player-climb.plist"];
-    
+    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"torch-small.plist"];
+
+
     
     //load game map (should be xml file in the future
     
     
-    _levelScene  = [[CCNode alloc] init];
+    //_levelScene  = [[CCNode alloc] init];
+    //_levelScene = [[CCSprite alloc] init];
+    mainScene = [[CCNode alloc] init];
     
+    //init lightmap;
+    lightmap = [CCRenderTexture renderTextureWithWidth:1136 height:640];
+    [lightmap setAutoDraw:YES];
+    [lightmap.sprite setAnchorPoint:ccp(0,0)];
+
+    
+    //init level texture. We are going to draw all scene on this texture and apply a shaders to it
+    _levelTexture = [CCRenderTexture renderTextureWithWidth: 1136 height: 640];
+    _levelTexture.sprite.shader = [CCShader shaderNamed:@"lightsShader"];
+    _levelTexture.sprite.shaderUniforms[@"u_lightTexture"] = lightmap.sprite.texture;
+    
+    [_levelTexture setAutoDraw:YES];
+    [_levelTexture.sprite setAnchorPoint:ccp(0,0)];
+    
+    [_levelTexture addChild: mainScene];
     
     
     self.levelMap = [RunnerTiledMap runnerTiledMapWithFile:@"level1.tmx"];
-    //[self addChild: self.levelMap];
-    [_levelScene addChild:self.levelMap];
+    [_levelMap setAnchorPoint:ccp(0,0)];
+    [_levelMap setPosition:ccp(0,0)]; //520 340
+    [mainScene addChild:self.levelMap];
+    //[_levelTexture addChild:self.levelMap];
     
+    //add light sources from the map
+    [_lightSources addObjectsFromArray: [_levelMap getLightSources]];
     
     @try {
         _mainPlayer = [[Player alloc] init];
         [_mainPlayer setPosition: ccp(288,96)];
-        [_levelScene addChild:_mainPlayer];
+        [mainScene addChild:_mainPlayer];
+        //[_levelTexture addChild:_mainPlayer];
     } @catch (NSException *e) {
         CCLOG(@"Error in creating mainPlayer");
     }
+    
+    //set OpenAL listener position
+    [[[[OpenALManager sharedInstance] currentContext] listener] setPosition:alpoint(288,96,0)];
+    
     
     @try {
         _monster1 = [[Monster alloc] initWithMap:self.levelMap andPrey:_mainPlayer];
         [_monster1 setPosition: ccp(300,40)];
         [_monster1 setColor:[CCColor colorWithRed:1 green:0 blue:0 alpha:0.9]];
-        [_levelScene addChild:_monster1];
+        [mainScene addChild:_monster1];
+        //[_levelTexture addChild:_monster1];
     } @catch (NSException *e) {
         CCLOG(@"Error in creating monster1");
     }
@@ -109,37 +153,120 @@
     [_monster1 DEBUGset];
     
     
-    
-    
-    [self addChild:_levelScene];
+    [self addChild:_levelTexture];
     
     _controlLayer = [[ControlLayer alloc] initWithRunner:_mainPlayer andMap: _levelMap];
     [self  addChild:_controlLayer];
+    
+    
+    oscillator = 0;
+
     
     // done
 	return self;
 }
 
+
+
+-(CCSprite *)lightTextureWithColor:(ccColor4F)bgColor textureWidth:(float)textureWidth textureHeight:(float)textureHeight {
+    
+    // 1: Create new CCRenderTexture
+    CCRenderTexture *rt = [CCRenderTexture renderTextureWithWidth:textureWidth height:textureHeight];
+    CCSprite* l = [CCSprite spriteWithImageNamed:@"lightmap1.png"];
+    [l setAnchorPoint:ccp(0,0)];
+    [l setPosition:ccp(300,300)];
+    
+    [rt addChild:l];
+    [rt setAutoDraw:YES];
+    
+    [rt.sprite setBlendMode:[CCBlendMode blendModeWithOptions: @{CCBlendFuncSrcColor:@(GL_DST_COLOR),CCBlendFuncDstColor:@(GL_ZERO),}]];
+    
+    //[_levelScene addChild:rt];
+    
+    // 2: Call CCRenderTexture:begin
+    //[rt beginWithClear:bgColor.r g:bgColor.g b:bgColor.b a:bgColor.a];
+    //[l visit];
+    
+    //[rt end];
+    
+    // 5: Create a new Sprite from the texture
+    //CCSprite * ret = [CCSprite spriteWithTexture:rt.sprite.texture];
+    //[ret addChild:l];
+    //[ret setBlendMode:[CCBlendMode blendModeWithOptions: @{CCBlendFuncSrcColor:@(GL_DST_COLOR),CCBlendFuncDstColor:@(GL_ZERO),}]];
+    
+
+    
+    //ret.shader = [CCShader shaderNamed:@"lightsShader"];
+    //CCTexture* noise = [CCTexture textureWithFile:@"Noise-hd.png"];
+    //noise.texParameters = &(ccTexParams){GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT};
+    
+    //ret.shaderUniforms[@"u_NoiseTexture"] = noise;
+    //ret.shaderUniforms[@"u_LightTexture"] = light;
+    
+    
+    return nil;
+}
+
+/**
+ *  Generate a lightmap for the scene
+ **/
+-(void) genLights {
+    
+    //update lights
+    CCSprite* playerLight = [CCSprite spriteWithImageNamed:@"lightmap1.png"];
+    [playerLight setPosition:ccp([_mainPlayer position].x*2, [_mainPlayer position].y*2)];
+    
+    NSUInteger amounts = [_lightSources count];
+    [lightmap beginWithClear:0 g:0 b:0 a:1];
+        for(NSUInteger i=0;i<amounts;i++) {
+            CCSprite* light  = [CCSprite spriteWithImageNamed:@"lightmap1.png"];
+            CGPoint pos = [(CCSprite*)_lightSources[i] position];
+            pos.x *= 2;
+            pos.y *= 2;
+            [light setPosition: pos];
+            [light setScale:(1.5+ sinf((rand()%4+oscillator++)/60)/25 + 0.005*(rand()%5))];
+            [light visit];
+        }
+        [playerLight visit];
+    [lightmap end];
+    
+    _levelTexture.sprite.shaderUniforms[@"u_lightTexture"] = lightmap.sprite.texture;
+         oscillator++;
+}
+
 -(void) update:(CCTime)delta {
     //scroll the map
-    CGPoint worldCoord = [self convertToWorldSpace: [_levelScene convertToWorldSpace: [_mainPlayer position]]];
+    CGPoint worldCoord = [self convertToWorldSpace: [mainScene convertToWorldSpace: [_mainPlayer position]]];
+    //CGPoint worldCoord = [self convertToWorldSpace: [_levelTexture convertToWorldSpace: [_mainPlayer position]]];
     
     if(worldCoord.x > 360) {
         //scroll the map left
         
-        [_levelScene setPosition:ccp([_levelScene position].x-4,[_levelScene position].y)];
+        [mainScene setPosition:ccp([mainScene position].x-5,[mainScene position].y)];
+        //[_levelTexture setPosition:ccp([_levelTexture position].x - 5, [_levelTexture position].y)];
     }
     
     if(worldCoord.x <180) {
         //scroll right
-        if([_levelScene position].x<0) [_levelScene setPosition:ccp([_levelScene position].x+4,[_levelScene position].y)];
+        if([mainScene position].x<0) [mainScene setPosition:ccp([mainScene position].x+5,[mainScene position].y)];
+        //if([_levelTexture position].x<0) [_levelTexture setPosition:ccp([_levelTexture position].x+5,[_levelTexture position].y)];
     }
 
     [self updateRunner:_mainPlayer];
     [self updateRunner: _monster1];
     [self updateRunner:_monster2];
     
+    //update OpenAL listener position
+    [[[[OpenALManager sharedInstance] currentContext] listener] setPosition:alpoint([_mainPlayer position].x,[_mainPlayer position].y,0)];
     
+    //[self genLights];
+    
+    //update sceneTexture;
+    //[sceneSprite removeFromParentAndCleanup:YES];
+    //sceneSprite = [CCSprite spriteWithTexture:_levelTexture];
+    //[self addChild: sceneSprite];
+    
+    [self genLights];
 }
 
 /**
@@ -151,7 +278,7 @@
     //check if the runner is still in scene frame
     CGPoint playerPos = [runner position];
     int width = [runner boundingBox].size.width;
-    int height = [runner boundingBox].size.height;
+    //int height = [runner boundingBox].size.height;
 
     
     
@@ -223,6 +350,12 @@
             [runner stopAllActions];
         }
     }
+}
+
+
+
+-(void) addLightSources:(NSSet *)object {
+    [self.lightSources addObject: object];
 }
 
 // -----------------------------------------------------------------------

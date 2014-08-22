@@ -56,6 +56,7 @@
 
 -(void)update:(CCTime)delta {
     
+    //CCLOG(@"Monster::update() : currentAction = %d", [self currentAction]);
     [self updateAI];
     
     if([self currentAction]!=NONE) return;

@@ -341,7 +341,7 @@
     [self stopAllActions];
     [self idle];
     
-    CCAction* fall = [CCActionMoveBy actionWithDuration:[self fallSpeed] position:ccp(0,-1000)];
+    CCAction* fall = [CCActionEaseIn  actionWithAction:[CCActionMoveBy actionWithDuration:[self fallSpeed]/4 position:ccp(0,-1000)] rate: 2];
     [fall setTag:FALL_ACTION];
     
     [self runAction:fall];

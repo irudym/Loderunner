@@ -82,13 +82,65 @@
 			<key>sourceSize</key>
 			<string>{8,12}</string>
 		</dict>
+		<key>torch-small6.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{48,0},{8,12}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,24}}</string>
+			<key>sourceSize</key>
+			<string>{8,12}</string>
+		</dict>
+		<key>torch-small7.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{56,0},{8,12}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,24}}</string>
+			<key>sourceSize</key>
+			<string>{8,12}</string>
+		</dict>
+		<key>torch-small8.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{64,0},{8,12}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,24}}</string>
+			<key>sourceSize</key>
+			<string>{8,12}</string>
+		</dict>
+		<key>torch-small9.png</key>
+		<dict>
+			<key>frame</key>
+			<string>{{72,0},{8,12}}</string>
+			<key>offset</key>
+			<string>{0,0}</string>
+			<key>rotated</key>
+			<false/>
+			<key>sourceColorRect</key>
+			<string>{{0,0},{16,24}}</string>
+			<key>sourceSize</key>
+			<string>{8,12}</string>
+		</dict>
 	</dict>
 	<key>metadata</key>
 	<dict>
 		<key>format</key>
 		<integer>2</integer>
 		<key>size</key>
-		<string>{48,12}</string>
+		<string>{80,12}</string>
 	</dict>
 </dict>
 </plist>

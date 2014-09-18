@@ -10,6 +10,7 @@
 #import "cocos2d.h"
 
 #import "Torch.h"
+#import "Teleport.h"
 
 #define FLOOR_HEIGHT 6
 #define TILE_HIGHT 32
@@ -42,13 +43,32 @@
 -(void) setTile: (uint32_t) gid atPosition: (CGPoint) pos;
 
 
-/**
+/** DEPRICATED
  *  Return the position in tile coordinates of the tile specified by position in points (cocos2d).
  *
  *  @param position Position in points.
  *  @return Coordinate of the tile at that position.
  */
 -(CGPoint) getTileCoordinateAt: (CGPoint) pos;
+
+
+-(CGPoint) convertToMapCoord: (CGPoint) pos;
+-(CGPoint) convertToSceneCoord: (CGPoint) pos;
+
+/**
+ * Return teleport (if it exists) at position in map coorfinates
+ *
+ *  @param  position - Position in map coordinates (i,j)
+ *  @return pointer to a teleport or nil in case there is no a teleport at provide position
+*/
+-(Teleport*) getTeleportAt: (CGPoint) pos;
+-(Teleport*) getTeleportByName: (NSString*) name;
+
+/**
+ * updated all teleports: activate them if case a runner at the teloport
+ * deactivate a teleport if there is no runner at it
+ **/
+-(void) updateTeleportsByRunner:(NSMutableArray*) runners;
 
 
 -(CGPoint) getPositionAt: (CGPoint) pos;
@@ -67,7 +87,7 @@
  *  @return YES or NO
  */
 +(BOOL) isLadder: (u_int32_t) GID;
-
+//+(BOOL) isTeleport: (u_int32_t) GID;
 
 /** 
  * Return an array of light sources

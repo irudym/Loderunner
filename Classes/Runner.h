@@ -17,7 +17,7 @@ typedef enum {
 } Direction;
 
 typedef enum {
-    NONE, IDLE,  RUN_ACTION = 100, TURN_ACTION, STOP_ACTION, MOVE_ACTION, JUMP_ACTION, FALL_ACTION, CLIMB_ACTION, LANDING_ACTION, STEPTO_ACTION, DUCK_ACTION
+    NONE, IDLE,  RUN_ACTION = 100, TURN_ACTION, STOP_ACTION, MOVE_ACTION, JUMP_ACTION, FALL_ACTION, CLIMB_ACTION, LANDING_ACTION, STEPTO_ACTION, DUCK_ACTION, LOCKED_ACTION
 } ActionTags;
 
 
@@ -42,6 +42,14 @@ typedef enum {
 -(void) turnUp;
 
 -(void) followingAction;
+
+/**
+ * Lock the runner
+ *
+ **/
+-(void) lock;
+-(void) unlock;
+-(BOOL) isLocked;
 
 
 @property NSString *name;

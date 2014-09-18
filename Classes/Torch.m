@@ -37,8 +37,11 @@
 
 -(void)load {
     NSMutableArray* torchFrames = [NSMutableArray array];
-    for(int i=0;i<6;i++) {
-        [torchFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"torch-small%d.png", i]]];
+    
+    int start_frame = rand()%8;
+    for(int i=0;i<10;i++) {
+        [torchFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"torch-small%d.png", start_frame++]]];
+        start_frame %=10;
     }
     
     _torchAnimation = [CCAnimation animationWithSpriteFrames: torchFrames delay: 0.05f];
@@ -60,8 +63,14 @@
     [soundSource setMaxDistance:1000];
     
     [soundSource play:effectBuffer loop:YES];
+    
+    lightmap = [CCSprite spriteWithImageNamed:@"lightmap1.png"];
 
     
+}
+
+-(CCSprite*) getLightMap {
+    return lightmap;
 }
 
 

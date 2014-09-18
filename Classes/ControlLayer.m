@@ -7,6 +7,8 @@
 //
 
 #import "ControlLayer.h"
+#import "Teleport.h"
+
 
 @implementation ControlLayer
 
@@ -121,6 +123,8 @@
 -(void) upButtonDown {
     int tile = [_mainMap getTileAtPosition:[_mainRunner position]];
     CCLOG(@"Tile at player position is: %d",tile);
+    
+    Teleport *teleport = [_mainMap getTeleportAt:[_mainMap convertToMapCoord:[_mainRunner position]]];
     //
     if(tile == 13 || tile == 10 || tile == 11 || tile == 12) {
         float r_x = [_mainRunner position].x;
@@ -144,7 +148,10 @@
             if(fabsf(r_x-pos.x) > 16) [_mainRunner jump];
             else if((r_x > pos.x && [_mainRunner currentDirection] == LEFT) || (r_x < pos.x && [_mainRunner currentDirection] == RIGHT)) [_mainRunner stepTo:pos andClimbY:1000]; else [_mainRunner jump];
         }
-    } else [_mainRunner jump];
+    } else
+        if(teleport) { //teleport
+            [teleport runWithRunner:_mainRunner];
+        } else [_mainRunner jump];
 }
 
 

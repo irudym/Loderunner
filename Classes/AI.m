@@ -84,7 +84,7 @@
     //convert coords
     startP = [mainMap getTileCoordinateAt:startP];
     endP = [mainMap getTileCoordinateAt:endP];
-    //CCLOG(@"find a path from [%f,%f] to [%f,%f]",startP.x,startP.y, endP.x, endP.y);
+
     
     int count = 0;
     AStarNode* checkNode;
@@ -133,7 +133,7 @@
             if(count == 1) {
                 //LEFT
                 if(node.i-1>=0)
-                    if([mainMap getTile:ccp(node.i-1, node.j)]!=0 || (node.i-1>=1 & [mainMap getTile:ccp(node.i-1,node.j)]==0 & [mainMap getTile:ccp(node.i-2,node.j)]!=0 & [mainMap getTile: ccp(node.i,node.j)]!=11)) //where 10 is ladder?
+                    if([mainMap getTile:ccp(node.i-1, node.j)]!=0 || (node.i-1>=1 & [mainMap getTile:ccp(node.i-1,node.j)]==0 & [mainMap getTile:ccp(node.i-2,node.j)]!=0 & [mainMap getTile: ccp(node.i,node.j)]!=11)) //where 11 is ladder?
                     {
                         checkPoint.x = node.i - 1;
                         checkPoint.y = node.j;

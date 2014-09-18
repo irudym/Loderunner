@@ -36,7 +36,7 @@
 -(void) update:(CCTime)delta;
 
 -(CCSprite*) lightTextureWithColor: (ccColor4F)bgColor textureWidth:(float)textureWidth textureHeight:(float)textureHeight;
--(void) genLights;
+
 
 /**
  *  update runner state (falling, landing and so on)
@@ -51,6 +51,15 @@
  *  @param  object - CCSprite object
  **/
 //-(void) addLightSource: (CCSprite*) object;
+
+/** 
+ *  Generate a lightmap for the scene
+ **/
+-(void) genLights;
+
+//override
+-(void) draw:(CCRenderer *)renderer transform:(const GLKMatrix4 *)transform;
+
 
 @property Player* mainPlayer;
 @property Monster* monster1;

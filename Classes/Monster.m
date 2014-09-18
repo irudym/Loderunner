@@ -15,6 +15,7 @@
     TaskList* taskList;
     CCDrawNode *drawNode; //debug purposes
     RunnerTiledMap* mainMap;
+    float distanceDelta; // delta in distance comparing
 }
 
 @synthesize preyRunner;
@@ -31,6 +32,7 @@
     self.preyRunner = prey;
     
     brains = [[AI alloc] initWithMap:map];
+    distanceDelta = 16;
     mainMap = map;
     taskList = nil;
     self.moveSpeed = 8;
@@ -56,9 +58,7 @@
 
 -(void)update:(CCTime)delta {
     
-    //CCLOG(@"Monster::update() : currentAction = %d", [self currentAction]);
     [self updateAI];
-    
     if([self currentAction]!=NONE) return;
     
     //check if the pray is close than final point
@@ -66,14 +66,11 @@
     int distance2 = [brains heuristicFrom:[self position] to:[preyRunner position]];
     
     //possible lagging issue
-    if(distance2<distance1-16) {
-        //[self stop];
-        //[self setCurrentAction:NONE];
-        //taskList = nil;
+    if(distance2< (distance1 - distanceDelta)) {
         taskList = [brains findPathFrom:self.position to:preyRunner.position];
         [self DEBUGshowPath];
         CCLOG(@"Need path recalculation d1:%d d2:%d", distance1,distance2);
-        return;
+        //return;
     }
     
     
@@ -88,12 +85,9 @@
             [taskList removeLast];
         }
         if(currentTask.taskType == CLIMB_ACTION) {
-            //CCLOG(@"Climb a ladder to %f", currentTask.y);
-            
-            //[self climbY:(currentTask.y - [self position].y)];
             CGPoint ladder = [mainMap getTilePosWithPoint:[self position]];
             ladder.x += 16;
-            [self stepTo:ladder andClimbY:(currentTask.y - [self position].y)];
+            [self stepTo:ladder andClimbY:(currentTask.y - [self position].y - 2)];
             [taskList removeLast];
         }
         if(currentTask.taskType == JUMP_ACTION) {
@@ -102,7 +96,6 @@
         }
         
         if([self position].x == currentTask.x && [self position].y == currentTask.y) {
-            //if(currentTask.taskType == RUN_ACTION) [self stop];
             if([taskList removeLast] == 0) //job is done!
             {
                 //taskList = nil;

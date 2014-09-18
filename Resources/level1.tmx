@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="20" height="10" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="levelset1" tilewidth="32" tileheight="32">
+  <image source="levelset1.png" width="288" height="192"/>
+ </tileset>
+ <layer name="shadows" width="20" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYKAPEAZiUSgWg4pJQPmSePSB1IpDsSgB9TA7xAmow+YmmLtAekWgbBE0eWLNpQSIomEpJHchi0uiuV8GiGWBWI5K7lQFYjUgVqfADGIAsh9gYY/sT2EGTP+gxxst4wMAG0IGdw==
+  </data>
+ </layer>
+ <layer name="map" width="20" height="10">
+  <data encoding="base64" compression="zlib">
+   eJy1ktsKwCAMQ+e8bur//+4qpBDEii8TDnYa21R3XfZwghduoQlZKBt9xZmhTULc6CvVUP2srdOs+gRPCWeD8MKrn2LOucpn+ToZFfW1XoanjPWIPfbQ4L0g1v4L8ln1T9bn/v7KNzzrPxHwzX06ivmd9Z4sfyd3v9Jwvi48gGOLlabT/AGj+AN6
+  </data>
+ </layer>
+ <layer name="front" width="20" height="10">
+  <data encoding="base64" compression="zlib">
+   eJzTZaAuMCMgrwDE8lC2PB51uPQSC4g1WxGIlYBYGYhVcJijAJXXAmJtINYBYl0S3IIPyEBpMzQxWSCWg7qJkF9A8uJQLIpFXhWI1YBYnSKX0geA3I/sX0koLYNFLT0AAJ1ABMQ=
+  </data>
+ </layer>
+ <objectgroup name="objects" width="20" height="10">
+  <object name="torch" type="torch" x="175" y="208">
+   <properties>
+    <property name="file" value="torch-2.png"/>
+    <property name="sound" value="Audio/fire_loop_01.mp3"/>
+   </properties>
+  </object>
+  <object name="torch" type="torch" x="333" y="208">
+   <properties>
+    <property name="file" value="torch-2.png"/>
+    <property name="sound" value="Audio/fire_loop_01.mp3"/>
+   </properties>
+  </object>
+  <object name="torch" type="torch" x="79" y="110">
+   <properties>
+    <property name="file" value="torch-2.png"/>
+    <property name="sound" value="Audio/fire_loop_01.mp3"/>
+   </properties>
+  </object>
+  <object name="torch" type="torch" x="75" y="274">
+   <properties>
+    <property name="file" value="torch-small.png"/>
+    <property name="sound" value="Audio/fire_loop_01.mp3"/>
+   </properties>
+  </object>
+  <object name="torch" type="torch" x="551" y="45">
+   <properties>
+    <property name="sound" value="Audio/fire_loop_01.mp3"/>
+   </properties>
+  </object>
+  <object name="teleport1" type="teleport" x="14" y="47">
+   <properties>
+    <property name="linkTo" value="teleport2"/>
+   </properties>
+  </object>
+  <object name="teleport2" type="teleport" x="591" y="140">
+   <properties>
+    <property name="linkTo" value="teleport1"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

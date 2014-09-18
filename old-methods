@@ -1,0 +1,346 @@
+
+/*
+
+-(void) runRightByX: (float) x;
+-(void) runLeftByX: (float) x;
+
+-(void) runRight;
+-(void) runLeft;
+
+-(void) jump;
+-(void) landing;
+-(void) fall;
+
+-(void) climbUp;
+-(void) climbDown;
+
+-(void) climbByY: (float) y;
+
+-(BOOL) isFalling;
+-(BOOL) isJumping;
+
+
+-(void) stop;
+-(Direction) rotate;
+-(Direction) turnRight: (SEL)nextAction;
+-(Direction) turnLeft: (SEL)nextAction;
+-(Direction) turnUp: (SEL)nextAction;
+
+-(void) setStand;
+-(void) runAfter;
+*/
+
+
+/*
+-(void) runLeftByX:(float) x {
+    CCActionAnimate *animationAction = [CCActionAnimate actionWithAnimation:_runLeftAnimation];
+    CCActionRepeatForever *repeatingAnimation = [CCActionRepeatForever actionWithAction:animationAction];
+    [repeatingAnimation setTag:RUN_ACTION];
+    
+    [self runAction:repeatingAnimation];
+    CCAction* moveAction = [CCActionMoveBy actionWithDuration:[self moveSpeed] position:ccp(-x,0)];
+    [moveAction setTag:MOVE_ACTION];
+    [self runAction:moveAction];
+    
+}
+
+-(void) runRightByX:(float) x {
+    CCActionAnimate *animationAction = [CCActionAnimate actionWithAnimation:_runRightAnimation];
+    CCActionRepeatForever *repeatingAnimation = [CCActionRepeatForever actionWithAction:animationAction];
+    [repeatingAnimation setTag:RUN_ACTION];
+    
+    [self runAction:repeatingAnimation];
+    CCAction* moveAction = [CCActionMoveBy actionWithDuration:[self moveSpeed] position:ccp(x,0)];
+    [moveAction setTag:MOVE_ACTION];
+    [self runAction:moveAction];
+}
+
+
+-(void) runRight
+{
+    if([self getActionByTag:FALLBY_ACTION]) return;
+    
+    if([self getActionByTag:JUMPBY_ACTION]) {
+        runnerNextAction = RUN_ACTION;
+        return;
+    }
+    if(_currentDirection != RIGHT) {
+        runnerNextAction = RUN_ACTION;
+        _currentDirection = [self turnRight: @selector(runAfter)];
+        return;
+    }
+    
+    [self runRightByX:1000];
+    
+}
+
+-(void) runLeft
+{
+    if([self getActionByTag:FALLBY_ACTION]) return;
+    
+    if([self getActionByTag:JUMP_ACTION]) {
+        runnerNextAction = RUN_ACTION;
+        return;
+    }
+    if(_currentDirection != LEFT) {
+        _currentDirection = [self turnLeft: @selector(runAfter)];
+        runnerNextAction = RUN_ACTION;
+        return;
+    }
+    
+    [self runLeftByX:1000];
+}
+
+-(void) stop
+{
+    
+    CCAction *action = [self getActionByTag:RUN_ACTION];
+    
+    [self stopActionByTag:RUN_ACTION];
+    [self stopActionByTag:MOVE_ACTION];
+
+    CCActionRepeatForever* actionRepeat = (CCActionRepeatForever*)[self getActionByTag: CLIMB_ACTION];
+    if(actionRepeat) {
+        CCActionAnimate* climbAction = (CCActionAnimate*)[actionRepeat innerAction];
+        if(climbAction ) {
+            CCLOG(@"Climb stop frame: %ld", (long)[climbAction getNextFrame]);
+            climbStopFrame = [climbAction getNextFrame];
+            climbStopLoop = [climbAction getExecutedLoops];
+        }
+    }
+    
+    [self stopActionByTag:CLIMB_ACTION];
+    [self stopActionByTag:CLIMBBY_ACTION];
+    
+    CCActionAnimate* stopAction = nil;
+    runnerNextAction = NONE;
+    
+    if(action) {
+        switch(_currentDirection) {
+            case RIGHT: stopAction = [CCActionAnimate actionWithAnimation:_stopRightAnimation]; break;
+            case LEFT: stopAction = [CCActionAnimate actionWithAnimation: _stopLeftAnimation]; break;
+            case UP: return; break;
+            case DOWN: return; break;
+        }
+    
+        
+        //stop the runner and set a stand frame
+        if(stopAction) {
+            CCActionSequence* sequence = [CCActionSequence actions: stopAction, [CCActionCallFunc actionWithTarget:self selector:@selector(setStand)], nil];
+            [self runAction:sequence];
+        }
+    }
+    
+}
+
+-(void) setStand {
+    
+    [self setSpriteFrame: [_standFrames objectAtIndex: _currentDirection]];
+}
+*/
+
+/**
+ *  Rotates the runner to opposite to current direction
+ *  in example, if current direction is RIGHT the Runner will be turned LEFT
+ *  
+ *  @return new direction
+ */
+-(Direction) rotate {
+    if (_currentDirection == RIGHT) return [self turnRight:nil];
+    else if (_currentDirection == LEFT) return [self turnLeft:nil];
+    
+    //in case the runner faces UP (BACK frame) leave it as it is.
+    return _currentDirection;
+}
+
+-(void) landing {
+    
+    [self stopActionByTag:FALLBY_ACTION];
+    
+    CCActionAnimate* landing;
+    
+    if(_currentDirection == RIGHT) landing = [CCActionAnimate actionWithAnimation:_landingRightAnimation];
+    if(_currentDirection == LEFT) landing = [CCActionAnimate actionWithAnimation:_landingLeftAnimation];
+    currentAction = LANDING_ACTION;
+    [landing setTag:LANDING_ACTION];
+    
+     CCActionSequence* sequence = [CCActionSequence actionOne:landing two:[CCActionCallFunc actionWithTarget:self selector:@selector(runAfter)]];
+    
+    [self runAction:sequence];
+}
+
+-(void) fall {
+    if([self getActionByTag:FALLBY_ACTION]) return;
+    [self stop];
+    CCAction* fall = [CCActionMoveBy actionWithDuration:[self fallSpeed] position:ccp(0,-1000)];
+    [fall setTag:FALLBY_ACTION];
+    
+    [self runAction:fall];
+}
+
+-(BOOL) isFalling {
+    return [self getActionByTag:FALLBY_ACTION]!=nil;
+}
+
+-(BOOL) isJumping {
+    return [self getActionByTag:JUMPBY_ACTION]!=nil;
+}
+
+
+/**
+ *  Turns the runner left and run next action after that (in case it's not null)
+ *  
+ *  @param  nextAction  Selector to function which should be executed after turn is finnished
+ *  @return direction LEFT
+ */
+-(Direction) turnLeft: (SEL)nextAction {
+    
+    CCActionAnimate* turnLeftAction;
+    if(_currentDirection == UP) {
+        turnLeftAction = [CCActionAnimate actionWithAnimation: _turnUp2Left];
+    } else {
+        turnLeftAction = [CCActionAnimate actionWithAnimation:_rotateAnimation];
+    }
+    
+    CCActionSequence* sequence;
+    
+    if(nextAction != nil) {
+        sequence = [CCActionSequence actionOne:turnLeftAction two: [CCActionCallFunc actionWithTarget:self selector:nextAction]];
+        runnerNextAction = RUN_ACTION;
+    }
+    else {
+        sequence = [CCActionSequence actionOne: turnLeftAction two: [CCActionCallFunc actionWithTarget:self selector:@selector(setStand)]];
+    }
+    
+    [self runAction: sequence];
+    
+    return LEFT;
+}
+
+/**
+ *  Turns the runner right
+ *
+ *  @return direction RIGHT
+ */
+-(Direction) turnRight: (SEL)nextAction {
+    CCActionAnimate* turnRightAction;
+    if(_currentDirection == UP) {
+        turnRightAction = [CCActionAnimate actionWithAnimation: _turnUp2Right];
+    } else {
+        turnRightAction = (CCActionAnimate*)[[CCActionAnimate actionWithAnimation:_rotateAnimation] reverse];
+    }
+    
+    CCActionSequence* sequence;
+    
+    if(nextAction != nil) {
+        sequence = [CCActionSequence actionOne:turnRightAction two: [CCActionCallFunc actionWithTarget:self selector:nextAction]];
+        runnerNextAction = RUN_ACTION;
+    }
+    else {
+        sequence = [CCActionSequence actionOne: turnRightAction two: [CCActionCallFunc actionWithTarget:self selector:@selector(setStand)]];
+    }
+    
+    [self runAction: sequence];
+    
+    return RIGHT;
+}
+
+/**
+ *  Run after the runner's turned or jumped
+ *  pass that function to turnLeft/Right methods in case conrol button is still pressed
+ *  in runnerNextAction is NULL than set a stand frame for the sprite
+ */
+-(void) runAfter {
+    
+    //if next no next action
+    if(runnerNextAction == NONE) {
+        [self setStand];
+        return;
+    }
+    if(_currentDirection == LEFT) [self runLeft];
+    if(_currentDirection == RIGHT) [self runRight];
+    if(_currentDirection == UP) [self climbUp];
+    runnerNextAction = NONE;
+}
+
+/**
+ *  Make a jump
+ *
+ */
+-(void) jump {
+    
+    if([self getActionByTag:JUMPBY_ACTION]) return;
+    if([self getActionByTag:FALLBY_ACTION]) return;
+    
+    runnerNextAction = NONE;
+    
+    CCActionFiniteTime* jumpAction;
+    float jumpX = 32;
+    if (_currentDirection == RIGHT) jumpAction = [CCActionAnimate actionWithAnimation: _shortJumpRightAnimation];
+    if (_currentDirection == LEFT) {
+        jumpAction = [CCActionAnimate actionWithAnimation: _shortJumpLeftAnimation];
+        jumpX = -32;
+    }
+    [jumpAction setTag:JUMP_ACTION];
+    
+    [self runAction:[CCActionSequence actionOne: jumpAction two: [CCActionCallFunc actionWithTarget:self selector:@selector(runAfter)]]];
+    
+    CCAction* jumpByAction = [CCActionJumpBy actionWithDuration:0.5 position:ccp(jumpX,0) height:8 jumps:1];
+    [jumpByAction setTag:JUMPBY_ACTION];
+    [self runAction:jumpByAction];
+
+}
+
+-(Direction) turnUp:(SEL)nextAction {
+    CCActionAnimate* turn;
+    
+    if(_currentDirection == LEFT) {
+        turn = (CCActionAnimate*)[[CCActionAnimate actionWithAnimation:_turnUp2Left] reverse];
+    } else
+    if(_currentDirection == RIGHT) {
+        turn = (CCActionAnimate*)[[CCActionAnimate actionWithAnimation:_turnUp2Right] reverse];
+    } else return _currentDirection;
+    
+    if(nextAction!=nil) {
+        CCActionSequence *sequence = [CCActionSequence actionOne:turn two: [CCActionCallFunc actionWithTarget:self selector:nextAction]];
+        [self runAction:sequence];
+    } else [self runAction:turn];
+    return UP;
+}
+
+
+-(void) climbUp {
+    if(_currentDirection!=UP) {
+        _currentDirection = [self turnUp:@selector(runAfter)];
+        climbStopFrame = 0;
+    }
+    
+    [self climbByY:1000];
+    
+}
+
+-(void) climbDown {
+    if(_currentDirection!=UP) _currentDirection = [self turnUp:@selector(runAfter)];
+}
+
+-(void) climbByY:(float)y {
+    CCActionAnimate * climb = [CCActionAnimate actionWithAnimation:_climbAnimation];
+    //CCLOG(@"Set start frame: %ld",(long)climbStopFrame);
+    //[climb setNextFrame: climbStopFrame + 1];
+    
+    CCActionRepeatForever *repeatingAnimation = [CCActionRepeatForever actionWithAction:climb];
+    CCActionAnimate* act = (CCActionAnimate*)[repeatingAnimation innerAction];
+    
+    
+    
+    [repeatingAnimation setTag:CLIMB_ACTION];
+    
+    [self runAction:repeatingAnimation];
+    [act setNextFrame:climbStopFrame];
+    [act setExecutedLoops:climbStopLoop];
+    
+    CCAction* climbBy = [CCActionMoveBy actionWithDuration:100.0f position:ccp(0,y)];
+    [climbBy setTag:CLIMBBY_ACTION];
+    
+    [self runAction:climbBy];
+}

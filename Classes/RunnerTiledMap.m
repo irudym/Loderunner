@@ -13,6 +13,7 @@
 
 {
     NSMutableArray* lightSources;
+    NSMutableArray* teleports; //array of teleports
 }
 
 
@@ -39,6 +40,7 @@
     NSMutableArray* objects = [[self objectGroupNamed:@"objects"] objects];
     
     lightSources = [NSMutableArray array];
+    teleports = [NSMutableArray array];
     
     //load objects from object layer
     NSInteger x, y;
@@ -47,15 +49,46 @@
         x = [[objects[i] valueForKey:@"x"] integerValue];
         y = [[objects[i] valueForKey:@"y"] integerValue];
         
-        if([[objects[i] valueForKey:@"name"] isEqual:@"torch"]) {
+        if([[objects[i] valueForKey:@"type"] isEqual:@"torch"]) {
             CCLOG(@"Add torch(%ld,%ld,%@)",(long)x,y,[objects[i] valueForKey:@"file"]);
             Torch* torch = [[Torch alloc] initWithName:[objects[i] valueForKey:@"file"] andSound:[objects[i] valueForKey:@"sound"] andPosition:ccp(x,y)];
             [self addChild:torch];
             [lightSources addObject: torch];
+        } else if([[objects[i] valueForKey:@"type"] isEqual:@"teleport"]) {
+            CGPoint coord = [self convertToMapCoord:ccp(x,y)];
+            CCLOG(@"Add teleport(%f,%f)",coord.x,coord.y);
+
+        
+            Teleport* tel = [[Teleport alloc] initAtPosition:coord withName:[objects[i] valueForKey:@"name"]];
+            //add sprite position on the scene
+            [tel setPosition:[self convertToSceneCoord:coord]];
+            
+            [tel setLinkToName:[objects[i] valueForKey:@"linkTo"]];
+            
+            [self addChild:tel z:100];
+            [teleports addObject:tel];
+            [tel activate];
+            
+            //add light source
+            [lightSources addObject:tel];
         }
         
     }
-
+    
+    //update teleports
+    for(int i=0;i<[teleports count];i++) {
+        if([teleports[i] linkTo] == nil) {
+            Teleport* tel = [self getTeleportByName:[teleports[i] linkToName]];
+            if(tel!=nil) {
+                [teleports[i] setLinkTo:tel];
+            } else CCLOG(@"ERROR: there is no teleport with name: %@ !",[teleports[i] linkToName]);
+        }
+    }
+    
+    //set wdith and height
+    self.widthInPoints = [self getMapWidth]*2;
+    self.heightInPoints = [self getMapHeight]*2;
+    
     return self;
 }
 
@@ -119,7 +152,7 @@
     [[self mapLayer] setTileGID: gid at:[_mapLayer tileCoordinateAt:pos]];
 }
 
-/**
+/** DEPRICATED
  *  Return the position in tile coordinates of the tile specified by position in points (cocos2d).
  *
  *  @param position Position in points.
@@ -128,6 +161,29 @@
 -(CGPoint) getTileCoordinateAt:(CGPoint)pos {
     return [_mapLayer tileCoordinateAt:pos];
 }
+
+/**
+ *  Return the position in tile coordinates of the tile specified by position in points (cocos2d).
+ *
+ *  @param position Position in points.
+ *  @return Coordinate of the tile at that position.
+ */
+-(CGPoint) convertToMapCoord:(CGPoint)pos
+{
+    return [_mapLayer tileCoordinateAt:pos];
+}
+
+/**
+ *  Return the position in scene coordinates of the tile specified by position in Map coords (cocos2d).
+ *
+ *  @param position Position in map coords.
+ *  @return scene coordinates 
+ */
+-(CGPoint) convertToSceneCoord:(CGPoint)pos
+{
+    return [_mapLayer positionAt:pos];
+}
+
 
 -(float) getMapWidthInTiles {
     return [self mapSize].width;
@@ -145,6 +201,53 @@
 
 +(BOOL) isLadder:(u_int32_t)GID {
     return (GID >= 10 && GID <= 13);
+}
+
+
+-(Teleport*) getTeleportByName:(NSString *)name {
+    Teleport *tel;
+    for(int i=0;i<[teleports count];i++) {
+        tel = teleports[i];
+        if([[tel name] isEqualToString: name]) {
+            return tel;
+        }
+    }
+    return nil;
+}
+
+
+/**
+ * Return teleport (if it exists) at position in map coorfinates
+ *
+ *  @param  position - Position in map coordinates (i,j)
+ *  @return pointer to a teleport or nil in case there is no a teleport at provide position
+ */
+-(Teleport*) getTeleportAt:(CGPoint)pos {
+    Teleport* tel;
+    
+    for(int i=0;i<[teleports count];i++) {
+        tel = teleports[i];
+        if([tel mapPosition].x == pos.x && [tel mapPosition].y == pos.y) return tel;
+    }
+    return nil;
+}
+
+-(void) updateTeleportsByRunner:(NSMutableArray*)runners {
+    BOOL activated;
+    for(int tels=0;tels < [teleports count];tels++) {
+        activated = NO;
+        CGPoint tpos = [(Teleport*)teleports[tels] mapPosition];
+        //check if anybody at the teleport
+        for(int runs = 0;runs < [runners count];runs++) {
+            CGPoint rpos = [self convertToMapCoord:[(CCSprite*)runners[runs] position]];
+            if(rpos.x == tpos.x && rpos.y == tpos.y) {
+                activated = YES;
+                [teleports[tels] activate];
+                break;
+            }
+        }
+        if(!activated) [teleports[tels] deactivate];
+    }
 }
 
 @end

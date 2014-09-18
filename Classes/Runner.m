@@ -14,6 +14,7 @@
     CCDrawNode *drawNode; //debug purposes
     NSInteger climbStopFrame;
     NSInteger climbStopLoop;
+    BOOL locked;
 }
 
 @synthesize nextAction;
@@ -29,6 +30,8 @@
         self.name = name;
         [self load];
     }
+    
+    locked = NO;
     
     return self;
 }
@@ -433,6 +436,21 @@
         nextAction = CLIMB_ACTION;
         nextPosition.y = y;
     }
+}
+
+-(void) lock {
+    locked = YES;
+    [self stop];
+    [self setCurrentAction:LOCKED_ACTION];
+}
+
+-(void) unlock {
+    locked = NO;
+    [self setCurrentAction: NONE];
+}
+
+-(BOOL) isLocked {
+    return locked;
 }
 
 

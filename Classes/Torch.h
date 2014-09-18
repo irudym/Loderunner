@@ -11,12 +11,15 @@
 #import "cocos2d-ui.h"
 #import "OpenALManager.h"
 
+#import "LightSource.h"
 
-@interface Torch : CCSprite
+@interface Torch : CCSprite <LightSource>
 
 -(id) init;
 -(id) initWithName: (NSString*) name andSound: (NSString*)soundName andPosition: (CGPoint)point;
 -(void)load;
+
+-(CCSprite*) getLightMap;
 
 @property CCAnimation* torchAnimation;
 @property NSString *name;

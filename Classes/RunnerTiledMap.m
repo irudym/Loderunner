@@ -250,4 +250,44 @@
     }
 }
 
+
+-(void) sendMessage:(int)type withPosition:(CGPoint)position {
+    switch(type) {
+        case MSG_EXPLOSION : {
+            //CCLOG(@"EXPLOSION in map!!! at position: %f,%f",position.x,position.y);
+            [self destroyTileAtPosition:position];
+        } break;
+    }
+}
+
+-(u_int32_t) destroyTileAtPosition:(CGPoint)position {
+    CGPoint mapPos = [self convertToMapCoord:position];
+    
+    u_int32_t tile = [_mapLayer tileGIDAt:mapPos];
+    
+    //NSMutableDictionary* properties = [self propertiesForGID:tile];
+    //CCLOG(@"Tile: %d properties: destroyable = %@", tile,[[self propertiesForGID:tile] valueForKey:@"destroyable"]);
+    
+    if([[self propertiesForGID:tile] valueForKey:@"destroyable"] == nil) [_mapLayer removeTileAt:mapPos];
+       
+    return tile;
+}
+
+-(void) addChild:(CCNode *)child z:(NSInteger)z {
+    [super addChild:child z:z];
+    if([child conformsToProtocol:@protocol(LightSource)]) {
+        CCLOG(@"Adding light source");
+        [lightSources addObject:child];
+    }
+}
+
+-(void) removeChild:(CCNode *)child {
+    
+    if([child conformsToProtocol:@protocol(LightSource)]) {
+        CCLOG(@"Remove light source");
+        [lightSources removeObject:child];
+    }
+    [super removeChild:child];
+}
+
 @end

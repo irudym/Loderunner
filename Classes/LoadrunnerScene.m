@@ -53,7 +53,7 @@
     self = [super init];
     if (!self) return(nil);
     
-    debugSpeed = NO;
+    debugSpeed = YES;
     
     
     //set screen width and height variables
@@ -62,7 +62,7 @@
     screen_width = 1136;
     
     //create lightSources list
-    self.lightSources = [NSMutableArray array];
+    //self.lightSources = [NSMutableArray array];
     runnersList = [NSMutableArray array];
     
     
@@ -99,6 +99,8 @@
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"torch-small.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"teleport.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"teleport_light.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"mine.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"explosion.plist"];
 
     
     //load game map (should be xml file in the future
@@ -109,13 +111,13 @@
     mainScene = [[CCNode alloc] init];
     
     //init lightmap;
-    lightmap = [CCRenderTexture renderTextureWithWidth:1136 height:640];
+    lightmap = [CCRenderTexture renderTextureWithWidth:screen_width height:screen_height];
     [lightmap setAutoDraw:YES];
     [lightmap.sprite setAnchorPoint:ccp(0,0)];
 
     
     //init level texture. We are going to draw all scene on this texture and apply a shaders to it
-    _levelTexture = [CCRenderTexture renderTextureWithWidth: 1136 height: 640];
+    _levelTexture = [CCRenderTexture renderTextureWithWidth: screen_width height:screen_height];
     if(!debugSpeed) _levelTexture.sprite.shader = [CCShader shaderNamed:@"lightsShader"];
     _levelTexture.sprite.shaderUniforms[@"u_lightTexture"] = lightmap.sprite.texture;
     
@@ -131,8 +133,9 @@
     [mainScene addChild:self.levelMap];
     //[_levelTexture addChild:self.levelMap];
     
+    //DEPRECATE
     //add light sources from the map
-    [_lightSources addObjectsFromArray: [_levelMap getLightSources]];
+    //[_lightSources addObjectsFromArray: [_levelMap getLightSources]];
     
     @try {
         _mainPlayer = [[Player alloc] init];
@@ -245,15 +248,15 @@
     worldOffset.x *= 2;
     worldOffset.y *= 2;
     
-    
-    NSUInteger amounts = [_lightSources count];
+    NSMutableArray *lightSources = [_levelMap getLightSources];
+    NSUInteger amounts = [lightSources count];
     [lightmap beginWithClear:0 g:0 b:0 a:1];
         for(NSUInteger i=0;i<amounts;i++) {
-            CGPoint pos = [(CCSprite*)_lightSources[i] position];
+            CGPoint pos = [(CCSprite*)lightSources[i] position];
             pos.x = pos.x*2 + worldOffset.x;
             pos.y = pos.y*2 + worldOffset.y;
             if(pos.x > -200 & pos.x < (screen_width+200)) {
-                CCSprite* light  = [_lightSources[i] getLightMap]; //[CCSprite spriteWithImageNamed:@"lightmap1.png"];
+                CCSprite* light  = [lightSources[i] getLightMap];
                 if(light!=nil) {
                     [light setPosition: pos];
                     [light setScale:(1.5+ sinf((rand()%4+oscillator++)/60)/25 + 0.005*(rand()%5))];
@@ -392,9 +395,9 @@
 
 
 
--(void) addLightSources:(NSSet *)object {
-    [self.lightSources addObject: object];
-}
+//-(void) addLightSources:(NSSet *)object {
+    //[self.lightSources addObject: object];
+//}
 
 // -----------------------------------------------------------------------
 

@@ -249,6 +249,7 @@ static CCTexture *CCTextureNone = nil;
 		_contentScale = contentScale;
 		
 		glPopGroupMarkerEXT();
+        [self setAntialiased:NO];
 	}
 	return self;
 }

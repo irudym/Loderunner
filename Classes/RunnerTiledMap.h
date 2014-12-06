@@ -12,10 +12,12 @@
 #import "Torch.h"
 #import "Teleport.h"
 
+#import "Message.h"
+
 #define FLOOR_HEIGHT 6
 #define TILE_HIGHT 32
 
-@interface RunnerTiledMap : CCTiledMap 
+@interface RunnerTiledMap : CCTiledMap <Message>
 
 +(id) runnerTiledMapWithFile:(NSString*)tmxFile;
 
@@ -80,6 +82,17 @@
 
 -(void) loadObjects;
 
+//send message to map
+-(void) sendMessage:(int)type withPosition:(CGPoint)position;
+
+/**
+ * Destroy tile at scene position
+ *
+ *  @param  position - Position in scene coordinates (x,y)
+ *  @return 0 if tile was destroyed of tile ID otherwise
+ */
+-(u_int32_t) destroyTileAtPosition: (CGPoint)position;
+
 /**
  *  Check if tile GID belongs to ladders tiles.
  *
@@ -93,6 +106,17 @@
  * Return an array of light sources
  **/
 -(NSMutableArray*) getLightSources;
+
+/**
+ * OVERRIDED method
+ **/
+-(void) addChild: (CCNode*) child z:(NSInteger)z;
+
+
+/**
+ * OVERRIDED method
+ **/
+-(void) removeChild: (CCNode*)child;
 
 
 @property CCSprite* background;

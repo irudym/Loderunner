@@ -52,6 +52,12 @@
         [downButton setButtonUpTarget:@selector(buttonUp) fromObject:self];
         [self addChild:downButton];
         
+        ControlButton *actionButton = [ControlButton controlButtonWithImage:@"action-hd.png"];
+        [actionButton setPosition:ccp(25,25)];
+        [actionButton setButtonDownTarget:@selector(actionButtonDown) fromObject:self];
+        [actionButton setButtonUpTarget:@selector(buttonUp) fromObject:self];
+        [self addChild:actionButton];
+        
     }
     return self;
 }
@@ -154,6 +160,19 @@
         } else [_mainRunner jump];
 }
 
+-(void) actionButtonDown {
+    [_mainRunner stop];
+    [(Player*)_mainRunner duck];
+    Mine* mine = [[Mine alloc] init];
+    CGPoint pos = [_mainRunner position];
+    pos.y -= 16;
+    [mine setPosition: pos];
+    [_mainMap addChild: mine z: 5] ;
+}
+
+-(void) actionButtonUp {
+
+}
 
 
 @end

@@ -72,7 +72,7 @@
 @property CCRenderTexture* levelTexture;
 
 //light sources
-@property NSMutableArray* lightSources;
+//@property NSMutableArray* lightSources;
 
 
 // -----------------------------------------------------------------------

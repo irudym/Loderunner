@@ -8,6 +8,7 @@
 
 #import "Runner.h"
 #import "Player.h"
+#import "Mine.h"
 #import "ControlButton.h"
 #import "cocos2d.h"
 #import <UIKit/UIKit.h>
@@ -21,6 +22,8 @@
 -(void) leftButtonDown;
 -(void) upButtonDown;
 -(void) downButtonDown;
+-(void) actionButtonDown;
+-(void) actionButtonUp;
 
 @property Runner* mainRunner;
 @property RunnerTiledMap* mainMap;

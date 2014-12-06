@@ -15,6 +15,7 @@
 @interface Mine : CCSprite <LightSource>
 
 -(id) init;
+-(id) initWithPosition: (CGPoint) position;
 -(void) load;
 -(void) explode;
 

@@ -163,10 +163,9 @@
 -(void) actionButtonDown {
     [_mainRunner stop];
     [(Player*)_mainRunner duck];
-    Mine* mine = [[Mine alloc] init];
     CGPoint pos = [_mainRunner position];
     pos.y -= 16;
-    [mine setPosition: pos];
+    Mine* mine = [[Mine alloc] initWithPosition: pos];
     [_mainMap addChild: mine z: 5] ;
 }
 

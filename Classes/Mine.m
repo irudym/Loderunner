@@ -14,6 +14,8 @@
 @implementation Mine
 {
    CCSprite* lightmap;
+    ALSource* soundSource;
+    ALBuffer* effectBuffer;
 }
 
 
@@ -21,6 +23,16 @@
     self = [super init];
     if(self) {
         [self load];
+    }
+    return self;
+}
+
+-(id) initWithPosition:(CGPoint)position {
+    self = [super init];
+    if(self) {
+        [self setPosition:position];
+        [self load];
+        [soundSource setPosition:alpoint(position.x, position.y, -100)];
     }
     return self;
 }
@@ -45,6 +57,13 @@
     
     lightmap = nil;
     
+    //set SX
+    effectBuffer = [[OpenALManager sharedInstance] bufferFromFile:@"Audio/Bomb.mp3" reduceToMono:YES];
+    
+    soundSource = [ALSource source];
+    [soundSource setBuffer:effectBuffer];
+    [soundSource setReferenceDistance: 5];
+    [soundSource setMaxDistance:1000];
 }
 
 -(void) explode {
@@ -60,6 +79,8 @@
     //send a message to map to remove a tile
     [((RunnerTiledMap*)[self parent]) sendMessage: MSG_EXPLOSION  withPosition: [self position]];
     
+    //play sound effect
+    [soundSource play:effectBuffer loop:NO];
 }
 
 -(void) deleteMine {

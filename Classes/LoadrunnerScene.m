@@ -53,7 +53,7 @@
     self = [super init];
     if (!self) return(nil);
     
-    debugSpeed = YES;
+    debugSpeed = NO;//YES;
     
     
     //set screen width and height variables
@@ -101,6 +101,7 @@
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"teleport_light.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"mine.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"explosion.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"lift.plist"];
 
     
     //load game map (should be xml file in the future
@@ -175,7 +176,6 @@
     }
     
     [_monster1 DEBUGset];
-    
     
     [self addChild:_levelTexture];
     
@@ -342,6 +342,12 @@
     //update the main scene
     u_int32_t tile = [_levelMap getTileAtPosition:playerPos];
     CGPoint pos = [_levelMap getTilePosWithPoint:playerPos];
+    
+    
+    //if runner is in a lift
+    //check if player position is in a lift position
+    //player.position.y = lift.position.y
+    //return
     
     //check if the player should fall
     if((![runner isJumping] && [_levelMap getTileAtPosition:[runner position]] == 0 && playerPos.y>31) || (tile==11 && (playerPos.x < pos.x + 4 || playerPos.x > pos.x + 28))) {

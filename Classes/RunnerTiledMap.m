@@ -54,10 +54,21 @@
             Torch* torch = [[Torch alloc] initWithName:[objects[i] valueForKey:@"file"] andSound:[objects[i] valueForKey:@"sound"] andPosition:ccp(x,y)];
             [self addChild:torch];
             [lightSources addObject: torch];
+        } else if([[objects[i] valueForKey:@"type"] isEqual: @"lift"]) {
+            CCLOG(@"Add lift(%ld,%ld,%@)",(long)x,y,[objects[i] valueForKey:@"name"]);
+            //fix lift position;
+            CGPoint coord = [self convertToMapCoord:ccp(x,y)];
+            CGPoint fcoord = [self convertToSceneCoord:coord];
+            fcoord.x += 3;
+            fcoord.y += 18;
+            CCLOG(@"Map coord: %f, %f",fcoord.x, fcoord.y);
+            
+            Lift* lift = [[Lift alloc] initWithPosition:fcoord];
+            [self addChild: lift z:10];
+            [lightSources addObject:lift];
         } else if([[objects[i] valueForKey:@"type"] isEqual:@"teleport"]) {
             CGPoint coord = [self convertToMapCoord:ccp(x,y)];
             CCLOG(@"Add teleport(%f,%f)",coord.x,coord.y);
-
         
             Teleport* tel = [[Teleport alloc] initAtPosition:coord withName:[objects[i] valueForKey:@"name"]];
             //add sprite position on the scene

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" width="20" height="10" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="levelset1" tilewidth="32" tileheight="32">
-  <image source="levelset1.png" width="288" height="192"/>
+  <image source="levelset1.png" width="288" height="224"/>
   <tile id="8">
    <properties>
     <property name="destroyable" value="no"/>
@@ -35,7 +35,7 @@
  </layer>
  <layer name="map" width="20" height="10">
   <data encoding="base64" compression="zlib">
-   eJy1ktsKwCAMQ+e8bur//+4qpBDEii8TDnYa21R3XfZwghduoQlZKBt9xZmhTULc6CvVUP2srdOs+gRPCWeD8MKrn2LOucpn+ToZFfW1XoanjPWIPfbQ4L0g1v4L8ln1T9bn/v7KNzzrPxHwzX06ivmd9Z4sfyd3v9Jwvi48gGOLlabT/AGj+AN6
+   eJydkt0KwCAIhdv6c6u9ym57/zebwRFEKmLBIW1H/YQ5Nz8Hy7NOVmVlFi38BTXdm1hx4S9qhvitt5hb/AlMCbWBdYPVm1j3HPWbce2cgvkyL4Mp4z3im2aoYCfEsj+h32z+zrvdb6ff+6NfZ5Z/IiCXPRtyMrXi8Qu+EWtb8I04H9YF6VjUTD7yPOr+ACiXBEQ=
   </data>
  </layer>
  <layer name="front" width="20" height="10">
@@ -83,5 +83,6 @@
     <property name="linkTo" value="teleport1"/>
    </properties>
   </object>
+  <object name="lift1" type="lift" x="270" y="300"/>
  </objectgroup>
 </map>

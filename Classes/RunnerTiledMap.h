@@ -11,6 +11,7 @@
 
 #import "Torch.h"
 #import "Teleport.h"
+#import "Lift.h"
 
 #import "Message.h"
 

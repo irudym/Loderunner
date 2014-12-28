@@ -55,7 +55,7 @@
         ControlButton *actionButton = [ControlButton controlButtonWithImage:@"action-hd.png"];
         [actionButton setPosition:ccp(25,25)];
         [actionButton setButtonDownTarget:@selector(actionButtonDown) fromObject:self];
-        [actionButton setButtonUpTarget:@selector(buttonUp) fromObject:self];
+        [actionButton setButtonUpTarget:@selector(actionButtonUp) fromObject:self];
         [self addChild:actionButton];
         
     }
@@ -163,14 +163,14 @@
 -(void) actionButtonDown {
     [_mainRunner stop];
     [(Player*)_mainRunner duck];
+}
+
+-(void) actionButtonUp {
+    [_mainRunner stop];
     CGPoint pos = [_mainRunner position];
     pos.y -= 16;
     Mine* mine = [[Mine alloc] initWithPosition: pos];
     [_mainMap addChild: mine z: 5] ;
-}
-
--(void) actionButtonUp {
-
 }
 
 

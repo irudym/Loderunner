@@ -14,6 +14,7 @@
 {
     NSMutableArray* lightSources;
     NSMutableArray* teleports; //array of teleports
+    NSMutableArray* lifts; //array of lifts
 }
 
 
@@ -41,8 +42,9 @@
     
     lightSources = [NSMutableArray array];
     teleports = [NSMutableArray array];
+    lifts = [NSMutableArray array];
     
-    //load objects from object layer
+    //load objects from object layer and put them to corresponding lists
     NSInteger x, y;
     for(int i=0; i<[objects count];i++) {
         //run through objects and their properties
@@ -58,14 +60,32 @@
             CCLOG(@"Add lift(%ld,%ld,%@)",(long)x,y,[objects[i] valueForKey:@"name"]);
             //fix lift position;
             CGPoint coord = [self convertToMapCoord:ccp(x,y)];
+            CCLOG(@"Lift MAP coord: (%f,%f)",coord.x,coord.y);
+            
+            
+            CGPoint testP = [self convertToSceneCoord:ccp(11,9)];
+            CCLOG(@"test point: %f,%f",testP.x, testP.y);
+            
             CGPoint fcoord = [self convertToSceneCoord:coord];
             fcoord.x += 3;
-            fcoord.y += 18;
-            CCLOG(@"Map coord: %f, %f",fcoord.x, fcoord.y);
+            
+            CCLOG(@"Lift SCENE coord: %f, %f",fcoord.x, fcoord.y);
+            
+            CGPoint toPos;
+            toPos.x = [[objects[i] valueForKey:@"toI"] doubleValue];
+            toPos.y = [[objects[i] valueForKey:@"toJ"] doubleValue];
+            CCLOG(@"To pos: %f,%f", toPos.x, toPos.y);
             
             Lift* lift = [[Lift alloc] initWithPosition:fcoord];
+            toPos = [self convertToSceneCoord:toPos];
+            //fix to pos
+            toPos.x += 3;
+            [lift setToPosition:toPos];
+            
+            
             [self addChild: lift z:10];
             [lightSources addObject:lift];
+            [lifts addObject:lift];
         } else if([[objects[i] valueForKey:@"type"] isEqual:@"teleport"]) {
             CGPoint coord = [self convertToMapCoord:ccp(x,y)];
             CCLOG(@"Add teleport(%f,%f)",coord.x,coord.y);
@@ -80,13 +100,17 @@
             [teleports addObject:tel];
             [tel activate];
             
+            CGPoint runnerPos = [self convertToSceneCoord:coord];
+            runnerPos.x += [self tileSize].width/2;
+            [tel setRunnerPosition: runnerPos];
+            
             //add light source
             [lightSources addObject:tel];
         }
         
     }
     
-    //update teleports
+    //update teleports (link them to each other)
     for(int i=0;i<[teleports count];i++) {
         if([teleports[i] linkTo] == nil) {
             Teleport* tel = [self getTeleportByName:[teleports[i] linkToName]];
@@ -299,6 +323,25 @@
         [lightSources removeObject:child];
     }
     [super removeChild:child];
+}
+
+/**
+ * Return lift object (if it exists) at position in map coordinates
+ *
+ *  @param  position - Position in map coordinates (i,j)
+ *  @return pointer to a lift or nil in case there is no a lift at provide position
+ */
+-(Lift*) getLiftAt: (CGPoint) pos {
+    Lift* lift;
+    CGPoint mapPos;
+    
+    for(int i=0;i<[lifts count];i++) {
+        lift = lifts[i];
+        mapPos = [self convertToMapCoord:[lift position]];
+        //CCLOG(@"lift mapPos[%f,%f] , scenePos[%f,%f]",mapPos.x, mapPos.y, [lift position].x, [lift position].y);
+        if(mapPos.x == pos.x && mapPos.y == pos.y) return lift;
+    }
+    return nil;
 }
 
 @end

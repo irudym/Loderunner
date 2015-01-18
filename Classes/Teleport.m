@@ -20,7 +20,7 @@
     CCAnimation* lightAnimation;
 }
 
-@synthesize linkTo ,name, linkToName, mapPosition;
+@synthesize linkTo ,name, linkToName, mapPosition, runnerPosition;
 
 -(id) init {
     self = [super init];
@@ -94,14 +94,7 @@
 }
 
 -(void) followingTeleporation {
-    //
-    
-    CGPoint newPos = [linkTo position];
-    //fix position
-    newPos.x += 16;
-    newPos.y -= 2;
-    
-    [currentRunner setPosition:newPos];
+    [currentRunner setPosition:[linkTo runnerPosition]];
     [currentRunner unlock];
     currentRunner = nil;
 }

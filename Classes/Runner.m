@@ -118,7 +118,7 @@
     
     //set initial sprite (always stand right)
     [self setSpriteFrame:[_standFrames objectAtIndex:0]];
-    [self setAnchorPoint:ccp(0.5f,0.78f)];
+    [self setAnchorPoint:ccp(0.5f,0.81f)];
     
     [[self texture] setAntialiased:NO];
     
@@ -455,6 +455,10 @@
     return locked;
 }
 
+
+-(void) setMapPosition:(CGPoint)position {
+    //[self setPosition:<#(CGPoint)#>];
+}
 
 
 

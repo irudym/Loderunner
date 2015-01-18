@@ -70,7 +70,7 @@
         if(currTile.x == [_mainMap getMapWidthInTiles] - 1) return;
         CGPoint nextTile = [_mainMap getPositionAt:ccp(currTile.x+1,currTile.y)];
         
-        if([_mainMap getTileAtPosition:nextTile] !=0) {
+        if([_mainMap getTileAtPosition:nextTile] !=0 && [_mainMap getTileAtPosition:nextTile] != 11) {
             if(playerPos.y<nextTile.y-2) return;
         }
     }
@@ -90,7 +90,7 @@
         if(currTile.x == 0) return;
         CGPoint nextTile = [_mainMap getPositionAt:ccp(currTile.x-1,currTile.y)];
         
-        if([_mainMap getTileAtPosition:nextTile] !=0) {
+        if([_mainMap getTileAtPosition:nextTile] !=0 && [_mainMap getTileAtPosition:nextTile] != 11) {
             if(playerPos.y<nextTile.y-2) return;
         }
     }
@@ -123,12 +123,18 @@
             if(fabsf(r_x-pos.x) > 16) [_mainRunner jump];
             else if((r_x > pos.x && [_mainRunner currentDirection] == LEFT) || (r_x < pos.x && [_mainRunner currentDirection] == RIGHT)) [_mainRunner stepTo:pos andClimbY:-1000]; else [(Player*)_mainRunner duck];
         }
-    } else [(Player*)_mainRunner duck];
+    } else {
+        Lift* lift = [_mainMap getLiftAt:[_mainMap convertToMapCoord:[_mainRunner position]]];
+        if(lift) {
+            [lift active: _mainRunner];
+        } else [(Player*)_mainRunner duck];
+    }
 }
 
 -(void) upButtonDown {
     int tile = [_mainMap getTileAtPosition:[_mainRunner position]];
     CCLOG(@"Tile at player position is: %d",tile);
+    
     
     Teleport *teleport = [_mainMap getTeleportAt:[_mainMap convertToMapCoord:[_mainRunner position]]];
     //
@@ -157,7 +163,13 @@
     } else
         if(teleport) { //teleport
             [teleport runWithRunner:_mainRunner];
-        } else [_mainRunner jump];
+        } else {
+            //use a lift
+            Lift* lift = [_mainMap getLiftAt:[_mainMap convertToMapCoord:[_mainRunner position]]];
+            if(lift) {
+                [lift active: _mainRunner];
+            } else [_mainRunner jump];
+        }
 }
 
 -(void) actionButtonDown {

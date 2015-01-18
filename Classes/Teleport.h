@@ -43,8 +43,10 @@
 //OVERRIDE
 -(void) setPosition:(CGPoint)position;
 
+
 @property Teleport* linkTo;
 @property NSString *name;
 @property NSString *linkToName;
 @property CGPoint mapPosition;
+@property CGPoint runnerPosition;  //precalculated a runner possition after teleportation
 @end

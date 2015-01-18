@@ -53,7 +53,7 @@
     self = [super init];
     if (!self) return(nil);
     
-    debugSpeed = NO;//YES;
+    debugSpeed = YES;
     
     
     //set screen width and height variables
@@ -140,9 +140,7 @@
     
     @try {
         _mainPlayer = [[Player alloc] init];
-        [_mainPlayer setPosition: ccp(288,96)];
-        //[mainScene addChild:_mainPlayer];
-        //[_levelTexture addChild:_mainPlayer];
+        [_mainPlayer setPosition: [_levelMap convertToSceneCoord:ccp(6,9)]];
         [_levelMap addChild:_mainPlayer z: 10];
         [runnersList addObject:_mainPlayer];
     } @catch (NSException *e) {
@@ -160,8 +158,8 @@
         [_monster1 setColor:[CCColor colorWithRed:1 green:0 blue:0 alpha:0.9]];
         //[mainScene addChild:_monster1];
         //[_levelTexture addChild:_monster1];
-        [_levelMap addChild:_monster1 z: 10];
-        [runnersList addObject:_monster1];
+        //[_levelMap addChild:_monster1 z: 10];
+        //[runnersList addObject:_monster1];
     } @catch (NSException *e) {
         CCLOG(@"Error in creating monster1");
     }
@@ -170,7 +168,7 @@
         _monster2 = [[Monster alloc] initWithMap:self.levelMap andPrey:_mainPlayer];
         [_monster2 setPosition: ccp(320,280)];
         //[_levelScene addChild:_monster2];
-        [runnersList addObject:_monster2];
+        //[runnersList addObject:_monster2];
     } @catch (NSException *e) {
         CCLOG(@"Error in creating monster2");
     }
@@ -352,7 +350,9 @@
     //check if the player should fall
     if((![runner isJumping] && [_levelMap getTileAtPosition:[runner position]] == 0 && playerPos.y>31) || (tile==11 && (playerPos.x < pos.x + 4 || playerPos.x > pos.x + 28))) {
         if([runner currentDirection] != UP) {
-            [runner fall];
+            //check the lift
+            Lift* lift = [_levelMap getLiftAt:[_levelMap convertToMapCoord: playerPos]];
+            if(lift == nil) [runner fall];
             return;
         }
     }
@@ -364,7 +364,7 @@
             
             //fix player y position
             CGPoint ppos = [runner position];
-            ppos.y = [_levelMap getTilePosWithPoint:playerPos].y-2;
+            ppos.y = [_levelMap getTilePosWithPoint:playerPos].y;
             [runner setPosition:ppos];
         }
     }
@@ -374,10 +374,10 @@
         CGPoint pos = [_levelMap getTilePosWithPoint:playerPos];
         
         if([_levelMap getTileAtPosition: playerPos] == 10 || [_levelMap getTileAtPosition: playerPos] == 13 ) {
-            if(playerPos.y < pos.y - 2) {
+            if(playerPos.y < pos.y) {
                 [runner stopAllActions];
                 //fix play pos
-                playerPos.y = pos.y - 2;
+                playerPos.y = pos.y;
                 [runner setPosition:playerPos];
             }
         }
@@ -391,7 +391,7 @@
             
             pos.y = (int)(lower_position.y/32)*32;
             
-            playerPos.y = pos.y+30;
+            playerPos.y = pos.y+32;
             [runner setPosition:playerPos];
             CCLOG(@"Player [%f] pos:[%f] lower_pos:[%f]", playerPos.y, pos.y,lower_position.y);
             [runner stopAllActions];

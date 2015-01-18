@@ -68,6 +68,15 @@
 -(Teleport*) getTeleportByName: (NSString*) name;
 
 /**
+ * Return lift object (if it exists) at position in map coorfinates
+ *
+ *  @param  position - Position in map coordinates (i,j)
+ *  @return pointer to a lift or nil in case there is no a lift at provide position
+ */
+-(Lift*) getLiftAt: (CGPoint) pos;
+
+
+/**
  * updated all teleports: activate them if case a runner at the teloport
  * deactivate a teleport if there is no runner at it
  **/

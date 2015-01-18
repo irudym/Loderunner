@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="20" height="10" tilewidth="32" tileheight="32">
+<map version="1.0" orientation="orthogonal" width="20" height="11" tilewidth="32" tileheight="32">
  <tileset firstgid="1" name="levelset1" tilewidth="32" tileheight="32">
   <image source="levelset1.png" width="288" height="224"/>
   <tile id="8">
@@ -28,61 +28,66 @@
    </properties>
   </tile>
  </tileset>
- <layer name="shadows" width="20" height="10">
+ <layer name="shadows" width="20" height="11">
   <data encoding="base64" compression="zlib">
-   eJxjYKAPEAZiUSgWg4pJQPmSePSB1IpDsSgB9TA7xAmow+YmmLtAekWgbBE0eWLNpQSIomEpJHchi0uiuV8GiGWBWI5K7lQFYjUgVqfADGIAsh9gYY/sT2EGTP+gxxst4wMAG0IGdw==
+   eJxjYBiaQBiIRaFYDComAeVL4tEHUisOxaIE1MPsECegDpubYO4C6RWBskXQ5Ik1lxIgioalkNyFLC6J5n4ZIJYFYjkquVMViNWAWJ0CM4gByH6AhT16GKDHO3q80TI+ABuaBnc=
   </data>
  </layer>
- <layer name="map" width="20" height="10">
+ <layer name="map" width="20" height="11">
   <data encoding="base64" compression="zlib">
-   eJydkt0KwCAIhdv6c6u9ym57/zebwRFEKmLBIW1H/YQ5Nz8Hy7NOVmVlFi38BTXdm1hx4S9qhvitt5hb/AlMCbWBdYPVm1j3HPWbce2cgvkyL4Mp4z3im2aoYCfEsj+h32z+zrvdb6ff+6NfZ5Z/IiCXPRtyMrXi8Qu+EWtb8I04H9YF6VjUTD7yPOr+ACiXBEQ=
+   eJy9kuEOgCAIhDVLKfT9XzfcjsWcuP6U2zcwDzhdIfy3opCETahCEWihZ9R0bRaOhZ7NDNWPWh6i6jM8ZdTuwgWvachtz1k/z9ebxZiv8wo8FXzXM+uhwjsh1/sT+nnzvTOe5DZ+0S+G55/Ysb/C8w59T0NtNOeevzdvv/LcYxNOYHOPmaaZeAPRRAOc
   </data>
  </layer>
- <layer name="front" width="20" height="10">
+ <layer name="front" width="20" height="11">
   <data encoding="base64" compression="zlib">
-   eJzTZaAuMCMgrwDE8lC2PB51uPQSC4g1WxGIlYBYGYhVcJijAJXXAmJtINYBYl0S3IIPyEBpMzQxWSCWg7qJkF9A8uJQLIpFXhWI1YBYnSKX0geA3I/sX0koLYNFLT0AAJ1ABMQ=
+   eJxjYKAu0KWyeWYE5BWAWB7KlsejDpdeYgGxZisCsRIQKwOxCpqcHtQcBai8FhBrA7EOA3nhZo5FTAZKm6GJyQKxHNRNuPwCMw8kLw7FoljUqQKxGhCrk+E+SgA55oHcj82/MmSahw8QYx4AHh4GIw==
   </data>
  </layer>
- <objectgroup name="objects" width="20" height="10">
-  <object name="torch" type="torch" x="175" y="208">
+ <objectgroup name="objects" width="20" height="11">
+  <object name="torch" type="torch" x="175" y="240">
    <properties>
     <property name="file" value="torch-2.png"/>
     <property name="sound" value="Audio/fire_loop_01.mp3"/>
    </properties>
   </object>
-  <object name="torch" type="torch" x="333" y="208">
+  <object name="torch" type="torch" x="333" y="240">
    <properties>
     <property name="file" value="torch-2.png"/>
     <property name="sound" value="Audio/fire_loop_01.mp3"/>
    </properties>
   </object>
-  <object name="torch" type="torch" x="79" y="110">
+  <object name="torch" type="torch" x="79" y="142">
    <properties>
     <property name="file" value="torch-2.png"/>
     <property name="sound" value="Audio/fire_loop_01.mp3"/>
    </properties>
   </object>
-  <object name="torch" type="torch" x="75" y="274">
+  <object name="torch" type="torch" x="75" y="306">
    <properties>
     <property name="file" value="torch-small.png"/>
     <property name="sound" value="Audio/fire_loop_01.mp3"/>
    </properties>
   </object>
-  <object name="torch" type="torch" x="551" y="45">
+  <object name="torch" type="torch" x="551" y="77">
    <properties>
     <property name="sound" value="Audio/fire_loop_01.mp3"/>
    </properties>
   </object>
-  <object name="teleport1" type="teleport" x="14" y="47">
+  <object name="teleport1" type="teleport" x="14" y="79">
    <properties>
     <property name="linkTo" value="teleport2"/>
    </properties>
   </object>
-  <object name="teleport2" type="teleport" x="591" y="140">
+  <object name="teleport2" type="teleport" x="591" y="172">
    <properties>
     <property name="linkTo" value="teleport1"/>
    </properties>
   </object>
-  <object name="lift1" type="lift" x="270" y="300"/>
+  <object name="lift" type="lift" x="372" y="333">
+   <properties>
+    <property name="toI" value="11"/>
+    <property name="toJ" value="5"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

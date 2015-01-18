@@ -16,5 +16,8 @@
 
 -(id) init;
 -(id) initWithPosition: (CGPoint) position;
+-(void) setToPosition: (CGPoint) toPosition;
+
+-(void) active: (CCNode*) runner;
 
 @end

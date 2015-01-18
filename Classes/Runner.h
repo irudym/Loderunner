@@ -43,6 +43,8 @@ typedef enum {
 
 -(void) followingAction;
 
+-(void) setMapPosition: (CGPoint) position;
+
 /**
  * Lock the runner
  *

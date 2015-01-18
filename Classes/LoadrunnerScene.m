@@ -53,7 +53,7 @@
     self = [super init];
     if (!self) return(nil);
     
-    debugSpeed = YES;
+    debugSpeed = NO;//YES;
     
     
     //set screen width and height variables
@@ -257,7 +257,7 @@
                 CCSprite* light  = [lightSources[i] getLightMap];
                 if(light!=nil) {
                     [light setPosition: pos];
-                    [light setScale:(1.5+ sinf((rand()%4+oscillator++)/60)/25 + 0.005*(rand()%5))];
+                    [light setScale:(1 + sinf((rand()%4+oscillator++)/60)/25 + 0.005*(rand()%5))];
                     [light visit]; //slow down on iOS emulation
                 }
             }

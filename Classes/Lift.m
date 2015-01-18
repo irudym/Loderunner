@@ -19,13 +19,13 @@
     self = [super initWithSpriteFrame:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName: @"lift0.png"]];
     if(self) {
         lightmap = [CCSprite spriteWithImageNamed:@"lift-lightmap.png"];
-        [lightmap setAnchorPoint:ccp(0,1)];
+        [lightmap setAnchorPoint:ccp(0,0.58f)];
         [self setAnchorPoint:ccp(0,0.58f)];
         
         //debug - show Anchor Point
-        CCDrawNode *drawNode = [[CCDrawNode alloc] init];
-        [drawNode drawDot:self.anchorPointInPoints radius:2.0f color:[CCColor colorWithRed:1 green:0 blue:0]];
-        [self addChild:drawNode];
+        //CCDrawNode *drawNode = [[CCDrawNode alloc] init];
+        //[drawNode drawDot:self.anchorPointInPoints radius:2.0f color:[CCColor colorWithRed:1 green:0 blue:0]];
+        //[self addChild:drawNode];
     }
     return self;
 }
@@ -55,7 +55,6 @@
     //check if the lift is in an action mode
     if([self numberOfRunningActions] > 0) return;
     
-    CCLOG(@"send lift to: (%f,%f)", position2.x, position2.y);
     CGPoint sendToPosition = position2;
     if([self position].x == position2.x && [self position].y == position2.y) sendToPosition = position1;
     CCAction *action = [CCActionMoveTo actionWithDuration:1.0f position:sendToPosition];

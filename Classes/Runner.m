@@ -77,7 +77,7 @@
     
     _shortJumpRightFrames = [NSMutableArray array];
     _shortJumpLeftFrames = [NSMutableArray array];
-    for(int i=0;i<7;i++) {
+    for(int i=0;i<5;i++) {
         [_shortJumpRightFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"%@-short-jump-right%d.png",[self name], i]]];
         [_shortJumpLeftFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"%@-short-jump-left%d.png",[self name], i]]];
     }
@@ -340,14 +340,13 @@
 
 -(void) fall {
     if(currentAction == FALL_ACTION) return;
-    if(currentAction == JUMP_ACTION) {
-        return;
-    }
+    if(currentAction == JUMP_ACTION) return;
     [self stopAllActions];
     [self idle];
     
-    CCAction* fall = [CCActionEaseIn  actionWithAction:[CCActionMoveBy actionWithDuration:[self fallSpeed]/4 position:ccp(0,-1000)] rate: 2];
-    [fall setTag:FALL_ACTION];
+    //CCAction* fall = [CCActionEaseIn  actionWithAction:[CCActionMoveBy actionWithDuration:[self fallSpeed]/4 position:ccp(0,-1000)] rate: 2];
+    
+    CCAction* fall = [CCActionEaseSineIn actionWithAction:[CCActionMoveBy actionWithDuration:[self fallSpeed]/4 position:ccp(0,-1000)]];
     
     [self runAction:fall];
     

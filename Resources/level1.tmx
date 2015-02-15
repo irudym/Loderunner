@@ -35,7 +35,7 @@
  </layer>
  <layer name="map" width="20" height="11">
   <data encoding="base64" compression="zlib">
-   eJy9kuEOgCAIhDVLKfT9XzfcjsWcuP6U2zcwDzhdIfy3opCETahCEWihZ9R0bRaOhZ7NDNWPWh6i6jM8ZdTuwgWvachtz1k/z9ebxZiv8wo8FXzXM+uhwjsh1/sT+nnzvTOe5DZ+0S+G55/Ysb/C8w59T0NtNOeevzdvv/LcYxNOYHOPmaaZeAPRRAOc
+   eJy9UtEKwCAItNWqVfv/353BRS4yetmC4yxPPSSi/45hWMbBKIzAiAt9QU1lzzgX+ixmNP2ozQM3vYcnj1rHSPBqh1j2nPXTfO2cjPltXoCngPeWkx4KvEd67yuinzZfy+VJLPmLfob6n3C4J+p7qPc41BqR1/zt7H7lufLNuAAZa5hpbsEP1BgDnQ==
   </data>
  </layer>
  <layer name="front" width="20" height="11">
@@ -87,6 +87,16 @@
    <properties>
     <property name="toI" value="11"/>
     <property name="toJ" value="5"/>
+   </properties>
+  </object>
+  <object name="switch1" type="switch" x="278" y="267">
+   <properties>
+    <property name="linkTo" value="platform1"/>
+   </properties>
+  </object>
+  <object name="switch2" type="switch" x="527" y="333">
+   <properties>
+    <property name="linkTo" value="object2"/>
    </properties>
   </object>
  </objectgroup>

@@ -106,6 +106,13 @@
             
             //add light source
             [lightSources addObject:tel];
+        } else if([[objects[i] valueForKey:@"type"] isEqual:@"switch"]) {
+            CGPoint coord = [self convertToMapCoord:ccp(x,y)];
+            CCLOG(@"Add switch(%ld,%ld) and map[%f,%f]", (long)x,y,coord.x, coord.y);
+            ControlPanel* panel = [[ControlPanel alloc] initWithPosition:ccp(x,y)];
+            //[panel setMapPosition:coord];
+            
+            [self addChild:panel];
         }
         
     }

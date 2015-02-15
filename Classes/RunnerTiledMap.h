@@ -12,6 +12,7 @@
 #import "Torch.h"
 #import "Teleport.h"
 #import "Lift.h"
+#import "ControlPanel.h"
 
 #import "Message.h"
 

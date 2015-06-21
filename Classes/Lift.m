@@ -59,11 +59,18 @@
     if([self position].x == position2.x && [self position].y == position2.y) sendToPosition = position1;
     CCAction *action = [CCActionMoveTo actionWithDuration:1.0f position:sendToPosition];
     [self runAction:action];
-    CGPoint sendRunner;
-    sendRunner.x = [runner position].x;
-    sendRunner.y = sendToPosition.y;
-    CCAction* runnerAction = [CCActionMoveTo actionWithDuration:1.0f position:sendRunner];
-    [runner runAction:runnerAction];
+    
+    if(runner) {
+        CGPoint sendRunner;
+        sendRunner.x = [runner position].x;
+        sendRunner.y = sendToPosition.y;
+        CCAction* runnerAction = [CCActionMoveTo actionWithDuration:1.0f position:sendRunner];
+        [runner runAction:runnerAction];
+    }
+}
+
+-(void)turn:(BOOL)onoff {
+    [self active: nil];
 }
 
 @end

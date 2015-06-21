@@ -54,7 +54,7 @@ typedef enum {
 -(BOOL) isLocked;
 
 
-@property NSString *name;
+//@property NSString *name;
 @property CCAnimation* runRightAnimation;
 @property CCAnimation* stopRightAnimation;
 @property CCAnimation* runLeftAnimation;

@@ -15,6 +15,7 @@
     NSMutableArray* lightSources;
     NSMutableArray* teleports; //array of teleports
     NSMutableArray* lifts; //array of lifts
+    NSMutableArray* switches; //array of switches
 }
 
 
@@ -43,6 +44,8 @@
     lightSources = [NSMutableArray array];
     teleports = [NSMutableArray array];
     lifts = [NSMutableArray array];
+    switches = [NSMutableArray array];
+    NSMutableDictionary* swObject = [NSMutableDictionary dictionary];
     
     //load objects from object layer and put them to corresponding lists
     NSInteger x, y;
@@ -61,10 +64,6 @@
             //fix lift position;
             CGPoint coord = [self convertToMapCoord:ccp(x,y)];
             CCLOG(@"Lift MAP coord: (%f,%f)",coord.x,coord.y);
-            
-            
-            CGPoint testP = [self convertToSceneCoord:ccp(11,9)];
-            CCLOG(@"test point: %f,%f",testP.x, testP.y);
             
             CGPoint fcoord = [self convertToSceneCoord:coord];
             fcoord.x += 3;
@@ -108,11 +107,30 @@
             [lightSources addObject:tel];
         } else if([[objects[i] valueForKey:@"type"] isEqual:@"switch"]) {
             CGPoint coord = [self convertToMapCoord:ccp(x,y)];
-            CCLOG(@"Add switch(%ld,%ld) and map[%f,%f]", (long)x,y,coord.x, coord.y);
+            CCLOG(@"Add switch(%ld,%ld) with MAP coord[%f,%f]", (long)x,y,coord.x, coord.y);
             ControlPanel* panel = [[ControlPanel alloc] initWithPosition:ccp(x,y)];
+            [panel setLinkToName:[objects[i] valueForKey:@"linkTo"]];
+            [switches addObject: panel];
             //[panel setMapPosition:coord];
             
             [self addChild:panel];
+        } else if([[objects[i] valueForKey:@"type"] isEqual:@"firepipe"]) {
+            CCLOG(@"Add FirePipe(%ld,%ld,%@)",(long)x,y,[objects[i] valueForKey:@"name"]);
+            //fix firepipe position;
+            CGPoint coord = [self convertToMapCoord:ccp(x,y)];
+            CCLOG(@"FirePipe MAP coord: (%f,%f)",coord.x,coord.y);
+            
+            CGPoint fcoord = [self convertToSceneCoord:coord];
+            fcoord.x += 3;
+            fcoord.y -=18;
+            
+            CCLOG(@"FirePipe SCENE coord: %f, %f",fcoord.x, fcoord.y);
+            FirePipe *pipe = [[FirePipe alloc] initWithPosition:fcoord];
+            
+            [pipe setName: [objects[i] valueForKey:@"name"]];
+            [self addChild:pipe];
+            //[swObject setValue: pipe forKey: [objects[i] valueForKey:@"name"]];
+            [swObject setObject:pipe forKey:[objects[i] valueForKey:@"name"]];
         }
         
     }
@@ -125,6 +143,13 @@
                 [teleports[i] setLinkTo:tel];
             } else CCLOG(@"ERROR: there is no teleport with name: %@ !",[teleports[i] linkToName]);
         }
+    }
+    
+    //update switches - link objects to switches
+    for(int i=0;i<[switches count];i++) {
+        id obj = [swObject valueForKey: [switches[i] linkToName]];
+        if(obj != nil) [switches[i] setLinkTo: obj];
+            else CCLOG(@"ERROR: there is no switchable object with name: %@ !", [switches[i] linkToName]);
     }
     
     //set wdith and height
@@ -350,5 +375,24 @@
     }
     return nil;
 }
+
+/**
+ * Return switch object (if it exists) at position in map coorfinates
+ *
+ *  @param  position - Position in map coordinates (i,j)
+ *  @return pointer to a lift or nil in case there is no a switch at provide position
+ */
+-(ControlPanel*) getSwitchAt: (CGPoint) pos {
+    ControlPanel* panel;
+    CGPoint mapPos;
+    
+    for(int i=0; i<[switches count];i++) {
+        panel = switches[i];
+        mapPos = [self convertToMapCoord: [panel position]];
+        if(mapPos.x == pos.x && mapPos.y == pos.y) return panel;
+    }
+    return nil;
+}
+
 
 @end

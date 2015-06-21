@@ -10,6 +10,14 @@
 #import "CCAnimation.h"
 
 @implementation ControlPanel
+{
+    BOOL status;
+    CCAnimation* switchOn;
+    CCAnimation* panelAnimation;
+}
+
+@synthesize linkToName;
+@synthesize linkTo;
 
 
 -(id)init {
@@ -27,12 +35,43 @@
         [panelFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"switch%d.png", i]]];
     }
     
+    NSMutableArray *panelOnFrames = [NSMutableArray array];
+    [panelOnFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName: @"switch0.png"]];
+    for(int i=0;i<2;i++) {
+        [panelOnFrames addObject:[[CCSpriteFrameCache sharedSpriteFrameCache] spriteFrameByName:[NSString stringWithFormat:@"switch-on%d.png", i]]];
+    }
+    switchOn = [CCAnimation animationWithSpriteFrames:panelOnFrames delay:0.1f];
+    
     [self setSpriteFrame:[panelFrames objectAtIndex:0]];
     [self setPosition: position];
     
-    [self runAction:[CCActionRepeatForever actionWithAction:[CCActionAnimate actionWithAnimation:[CCAnimation animationWithSpriteFrames: panelFrames delay: 0.5f]]]];
+    panelAnimation = [CCAnimation animationWithSpriteFrames: panelFrames delay: 0.5f];
+    [self runAction:[CCActionRepeatForever actionWithAction:[CCActionAnimate actionWithAnimation: panelAnimation]]];
+    
+    status = NO;
     
     return self;
+}
+
+-(void) activate {
+    
+    //if current action is not nil return
+    
+    
+    status = !status;
+    CCLOG(@"Activate control panel and switch object: %@ %d",[self linkToName], status);
+    [linkTo turn: status];
+    if(status) {
+        [self stopAllActions];
+        [self runAction:[CCActionAnimate actionWithAnimation:switchOn]];
+    } else {
+        CCActionAnimate *action = [CCActionAnimate actionWithAnimation: switchOn];
+        [self runAction: [CCActionSequence actionOne:[action reverse] two:[CCActionCallFunc actionWithTarget:self selector:@selector(startAnim)]]];
+    }
+}
+
+-(void) startAnim {
+    [self runAction:[CCActionRepeatForever actionWithAction:[CCActionAnimate actionWithAnimation: panelAnimation]]];
 }
 
 

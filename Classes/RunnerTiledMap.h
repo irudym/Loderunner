@@ -13,6 +13,7 @@
 #import "Teleport.h"
 #import "Lift.h"
 #import "ControlPanel.h"
+#import "FirePipe.h"
 
 #import "Message.h"
 
@@ -75,6 +76,14 @@
  *  @return pointer to a lift or nil in case there is no a lift at provide position
  */
 -(Lift*) getLiftAt: (CGPoint) pos;
+
+/**
+ * Return switch object (if it exists) at position in map coorfinates
+ *
+ *  @param  position - Position in map coordinates (i,j)
+ *  @return pointer to a lift or nil in case there is no a switch at provide position
+ */
+-(ControlPanel*) getSwitchAt: (CGPoint) pos;
 
 
 /**

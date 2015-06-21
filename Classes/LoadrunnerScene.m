@@ -53,7 +53,7 @@
     self = [super init];
     if (!self) return(nil);
     
-    debugSpeed = YES;
+    debugSpeed = NO;
     
     
     //set screen width and height variables
@@ -103,6 +103,9 @@
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"explosion.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"lift.plist"];
     [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"switch.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"fpipe-anim.plist"];
+    [[CCSpriteFrameCache sharedSpriteFrameCache] addSpriteFramesWithFile: @"fpipe.plist"];
+    
 
     
     //load game map (should be xml file in the future

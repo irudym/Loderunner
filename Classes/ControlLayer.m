@@ -120,14 +120,19 @@
             } else [_mainRunner stepTo:pos andClimbY:-1000];
         }
         else {
-            if(fabsf(r_x-pos.x) > 16) [_mainRunner jump];
+            if(fabs(r_x-pos.x) > 16) [_mainRunner jump];
             else if((r_x > pos.x && [_mainRunner currentDirection] == LEFT) || (r_x < pos.x && [_mainRunner currentDirection] == RIGHT)) [_mainRunner stepTo:pos andClimbY:-1000]; else [(Player*)_mainRunner duck];
         }
     } else {
         Lift* lift = [_mainMap getLiftAt:[_mainMap convertToMapCoord:[_mainRunner position]]];
         if(lift) {
             [lift active: _mainRunner];
-        } else [(Player*)_mainRunner duck];
+        } else {
+            ControlPanel* panel = [_mainMap getSwitchAt: [_mainMap convertToMapCoord:[_mainRunner position]]];
+            if(panel) {
+                [panel activate];
+            } else [(Player*)_mainRunner duck];
+        }
     }
 }
 

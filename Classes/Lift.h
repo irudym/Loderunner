@@ -11,13 +11,16 @@
 
 #import "CCSprite.h"
 #import "LightSource.h"
+#import "Switchable.h"
 
-@interface Lift : CCSprite <LightSource>
+@interface Lift : CCSprite <LightSource, Switchable>
 
 -(id) init;
 -(id) initWithPosition: (CGPoint) position;
 -(void) setToPosition: (CGPoint) toPosition;
 
 -(void) active: (CCNode*) runner;
+
+-(void) turn:(BOOL)onoff;
 
 @end

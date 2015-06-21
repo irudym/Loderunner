@@ -91,12 +91,19 @@
   </object>
   <object name="switch1" type="switch" x="278" y="267">
    <properties>
-    <property name="linkTo" value="platform1"/>
+    <property name="linkTo" value="firepipe01"/>
    </properties>
   </object>
   <object name="switch2" type="switch" x="527" y="333">
    <properties>
     <property name="linkTo" value="object2"/>
+   </properties>
+  </object>
+  <object name="firepipe01" type="firepipe" x="304" y="304"/>
+  <object name="firepipe02" type="firepipe" x="269" y="303"/>
+  <object name="switch2" type="switch" x="236" y="330">
+   <properties>
+    <property name="linkTo" value="firepipe02"/>
    </properties>
   </object>
  </objectgroup>

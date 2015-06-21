@@ -10,10 +10,17 @@
 #import "cocos2d.h"
 #import "cocos2d-ui.h"
 
+#import "Switchable.h"
+
 
 @interface ControlPanel : CCSprite
 
 -(id) init;
 -(id) initWithPosition: (CGPoint) position;
+
+-(void) activate;
+
+@property NSString* linkToName;
+@property id linkTo;
 
 @end
